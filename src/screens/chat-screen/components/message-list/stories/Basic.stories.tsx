@@ -69,7 +69,7 @@ export const Basic: Story = {
               <ChatWindowProvider conversationId={29}>
                 <ScrollView contentContainerStyle={tailwind.style('flex')}>
                   <PlatformSpecificKeyboardWrapperComponent
-                    style={tailwind.style('flex-1 bg-white')}
+                    style={tailwind.style('flex-1 bg-brand-background')}
                     interpolator="linear">
                     <MessagesList
                       currentUserId={1}

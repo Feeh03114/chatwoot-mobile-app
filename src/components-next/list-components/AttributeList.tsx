@@ -82,7 +82,7 @@ const AttributeItem = (props: AttributeItemProps) => {
               style={tailwind.style(
                 'text-base font-inter-normal-20 leading-[22px] tracking-[0.16px] overflow-hidden',
                 listItem.subtitleType === 'light' ? 'text-gray-900' : 'text-gray-950',
-                listItem.type === 'link' ? 'text-blue-800 underline' : '',
+                listItem.type === 'link' ? 'text-brand-primary underline' : '',
               )}>
               {formattedValue}
             </Animated.Text>
@@ -113,7 +113,7 @@ export const AttributeList = (props: AttributeListProps) => {
           </Animated.Text>
         </Animated.View>
       ) : null}
-      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-white'), styles.listShadow]}>
+      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background'), styles.listShadow]}>
         {list.map(
           (listItem, index) =>
             !listItem.disabled &&
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 4,
-        backgroundColor: 'white',
+        backgroundColor: tailwind.color('brand-background'),
       },
     }) || {}, // Add fallback empty object
 });

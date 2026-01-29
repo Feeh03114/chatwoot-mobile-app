@@ -22,7 +22,7 @@ const meta: Meta<typeof ChatHeader> = {
   },
   decorators: [
     Story => (
-      <View style={tailwind.style('bg-white')}>
+      <View style={tailwind.style('bg-brand-background')}>
         <Story />
       </View>
     ),

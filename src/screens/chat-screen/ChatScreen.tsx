@@ -3,6 +3,7 @@ import PagerView, { PagerViewOnPageSelectedEvent } from 'react-native-pager-view
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useColorScheme } from 'react-native';
 
 import { ChatHeaderContainer } from './components';
 import { ConversationActions } from './conversation-actions';
@@ -95,6 +96,7 @@ const ChatScreen = (props: ChatScreenProps) => {
   const navigation = useNavigation();
   const { conversationId, primaryActorId, primaryActorType } = props.route.params;
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
 
   const conversationFetching = useAppSelector(state => selectConversationFetching(state));
   const conversationError = useAppSelector(state => selectConversationError(state));
@@ -136,47 +138,35 @@ const ChatScreen = (props: ChatScreenProps) => {
     }
   };
 
-  if (conversation) {
-    return (
-      <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
-        <LightBoxProvider>
-          <ChatWindowProvider conversationId={conversationId}>
-            <ChatScreenWrapper {...props} />
-          </ChatWindowProvider>
-        </LightBoxProvider>
-        <ActionBottomSheet />
-      </SafeAreaView>
-    );
-  }
+  const errorIconColor =
+    colorScheme === 'dark' ? tailwind.color('rubyDark-700') : tailwind.color('ruby-700');
 
-  if (conversationFetching) {
-    return (
-      <Animated.View
-        style={tailwind.style('flex-1 items-center justify-center', `pb-[${TAB_BAR_HEIGHT}px]`)}>
-        <ActivityIndicator />
-      </Animated.View>
-    );
-  }
+  const activityIndicatorColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-primary-dark')
+      : tailwind.color('brand-primary');
 
-  if (conversationError || !conversation) {
+  if (conversationError) {
     return (
-      <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
+      <SafeAreaView
+        edges={['top']}
+        style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <Animated.View
           style={tailwind.style(
             'flex-1 items-center justify-center gap-8 px-4',
             `pb-[${TAB_BAR_HEIGHT}px]`,
           )}>
-          <ErrorIcon />
+          <ErrorIcon stroke={errorIconColor} />
           <Animated.View style={tailwind.style('flex items-center justify-center gap-4')}>
             <Animated.Text
               style={tailwind.style(
-                'text-2xl font-inter-420-20 text-gray-950 font-inter-semibold-20',
+                'text-2xl font-inter-420-20 text-gray-950 dark:text-grayDark-950 font-inter-semibold-20',
               )}>
-              {conversationError || i18n.t('CONVERSATION.NOT_FOUND.TITLE')}
+              {conversationError}
             </Animated.Text>
             <Animated.Text
               style={tailwind.style(
-                'font-inter-normal-20 font-base leading-[18px] tracking-[0.32px] text-gray-950 text-center',
+                'font-inter-normal-20 font-base leading-[18px] tracking-[0.32px] text-gray-950 dark:text-grayDark-950 text-center',
               )}>
               {i18n.t('CONVERSATION.NOT_FOUND.DESCRIPTION')}
             </Animated.Text>
@@ -190,7 +180,10 @@ const ChatScreen = (props: ChatScreenProps) => {
             <Pressable
               style={tailwind.style('flex-row justify-center items-center')}
               onPress={handleBackPress}>
-              <Animated.Text style={tailwind.style('text-base font-inter-medium-24 text-gray-900')}>
+              <Animated.Text
+                style={tailwind.style(
+                  'text-base font-inter-medium-24 text-gray-900 dark:text-grayDark-900',
+                )}>
                 {i18n.t('CONVERSATION.NOT_FOUND.BACK_TO_HOME')}
               </Animated.Text>
             </Pressable>
@@ -199,7 +192,31 @@ const ChatScreen = (props: ChatScreenProps) => {
       </SafeAreaView>
     );
   }
-  return null;
+
+  if (conversationFetching || !conversation) {
+    return (
+      <Animated.View
+        style={tailwind.style(
+          'flex-1 items-center justify-center bg-brand-background dark:bg-brand-background-dark',
+          `pb-[${TAB_BAR_HEIGHT}px]`,
+        )}>
+        <ActivityIndicator color={activityIndicatorColor} />
+      </Animated.View>
+    );
+  }
+
+  return (
+    <SafeAreaView
+      edges={['top']}
+      style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
+      <LightBoxProvider>
+        <ChatWindowProvider conversationId={conversationId}>
+          <ChatScreenWrapper {...props} />
+        </ChatWindowProvider>
+      </LightBoxProvider>
+      <ActionBottomSheet />
+    </SafeAreaView>
+  );
 };
 
 export default ChatScreen;

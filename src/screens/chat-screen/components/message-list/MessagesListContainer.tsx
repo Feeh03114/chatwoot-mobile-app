@@ -170,7 +170,7 @@ export const MessagesListContainer = () => {
 
   return (
     <PlatformSpecificKeyboardWrapperComponent
-      style={tailwind.style('flex-1 bg-white')}
+      style={tailwind.style('flex-1 bg-brand-background')}
       interpolator="linear">
       <MessagesList
         messages={messagesWithGrouping}

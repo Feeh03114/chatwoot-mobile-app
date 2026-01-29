@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks';
 import i18n from '@/i18n';
 import { SortOptions } from '@/types';
 import { selectFilters, setFilters } from '@/store/conversation/conversationFilterSlice';
+import { useThemeColors } from '@/hooks/useThemeColors'; // 1. Adicionar import
 
 type SortByCellProps = {
   value: string;
@@ -27,12 +28,16 @@ const SortByCell = (props: SortByCellProps) => {
   const dispatch = useAppDispatch();
 
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
 
   const handlePreferredSortPress = () => {
     hapticSelection?.();
     dispatch(setFilters({ key: 'sort_by', value }));
     setTimeout(() => filtersModalSheetRef.current?.dismiss({ overshootClamping: true }), 1);
   };
+
+  const borderColor = getThemedColor('border-blackA-A3', 'border-grayDark-300');
+  const textColor = getThemedColor('text-gray-950', 'text-grayDark-950');
 
   return (
     <Pressable
@@ -41,15 +46,16 @@ const SortByCell = (props: SortByCellProps) => {
       <Animated.View
         style={tailwind.style(
           'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-          index !== sortByList.length - 1 ? 'border-b-[1px] border-blackA-A3' : '',
+          index !== sortByList.length - 1 ? `border-b-[1px] ${borderColor}` : '',
         )}>
         <Animated.Text
           style={tailwind.style(
-            'text-base text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+            'text-base font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+            textColor,
           )}>
           {i18n.t(`CONVERSATION.FILTERS.SORT_BY.OPTIONS.${value.toUpperCase()}`)}
         </Animated.Text>
-        {filters.sort_by === value ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {filters.sort_by === value ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-primary-dark')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

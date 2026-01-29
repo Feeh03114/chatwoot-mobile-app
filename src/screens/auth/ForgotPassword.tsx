@@ -13,6 +13,7 @@ import { resetAuth } from '@/store/auth/authSlice';
 import AnalyticsHelper from '@/utils/analyticsUtils';
 import { ACCOUNT_EVENTS } from '@/constants/analyticsEvents';
 import i18n from '@/i18n';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 type FormData = {
   email: string;
@@ -39,14 +40,10 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SafeAreaView style={tailwind.style('flex-1 bg-white')}>
-      <StatusBar
-        translucent
-        backgroundColor={tailwind.color('bg-white')}
-        barStyle={'dark-content'}
-      />
-      <View style={tailwind.style('flex-1 bg-white')}>
-        <Animated.ScrollView
+      <SafeAreaView style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
+        <StatusBar backgroundColor={tailwind.color('bg-brand-background')} />
+        <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
+        <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tailwind.style('px-6 pt-16')}>
           <Icon icon={<KeyRoundIcon />} size={40} />
@@ -105,7 +102,7 @@ const ForgotPassword = () => {
             text={i18n.t('FORGOT_PASSWORD.RESET_HERE')}
             handlePress={handleSubmit(onSubmit)}
           />
-        </Animated.ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
   );

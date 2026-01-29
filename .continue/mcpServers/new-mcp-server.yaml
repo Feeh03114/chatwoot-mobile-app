@@ -1,0 +1,25 @@
+name: mcp-servers
+version: 0.0.1
+schema: v1
+
+mcpServers:
+  - name: playwright
+    command: npx
+    args: ["-y", "@playwright/mcp@latest"]
+
+  - name: context7
+    url: "https://mcp.context7.com/mcp"
+    http_headers:
+      CONTEXT7_API_KEY: "ctx7sk-71006636-4c57-4d04-b89c-a8d68ca2ce47"
+
+  - name: gemini-cli
+    command: npx
+    args: ["-y", "gemini-mcp-tool"]
+
+  - name: shadcn
+    command: npx
+    args: ["-y", "shadcn@latest", "mcp"]
+
+  - name: lighthouse
+    command: npx
+    args: ["-y", "@danielsogl/lighthouse-mcp@latest"]

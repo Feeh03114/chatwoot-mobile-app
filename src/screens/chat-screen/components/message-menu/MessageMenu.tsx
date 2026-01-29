@@ -12,6 +12,7 @@ import * as ContextMenu from 'zeego/context-menu';
 
 import { tailwind } from '@/theme';
 import { BottomSheetHeader, BottomSheetWrapper, Icon } from '@/components-next/common';
+import { useThemeColors } from '@/hooks/useThemeColors'; // Adicionar import
 
 export type MenuOption = {
   title: string;
@@ -103,11 +104,16 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
     [],
   );
 
+  const { getThemedColor } = useThemeColors(); // Adicionar useThemeColors
+
   if (menuOptions?.length === 0) {
     return <React.Fragment>{children}</React.Fragment>;
   }
 
   if (Platform.OS === 'android') {
+    const borderColor = getThemedColor('border-blackA-A3', 'border-grayDark-300'); // Cor da borda
+    const textColor = getThemedColor('text-gray-950', 'text-grayDark-950'); // Cor do texto da opção
+
     return (
       <React.Fragment>
         <GestureDetector gesture={longPressGesture}>{children}</GestureDetector>
@@ -138,16 +144,18 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
                     }}
                     style={tailwind.style('flex flex-row items-center')}>
                     <Animated.View>
+                      {/* O option.icon deve lidar com sua própria cor via useThemeColors */}
                       <Icon icon={option.icon} size={24} />
                     </Animated.View>
                     <Animated.View
                       style={tailwind.style(
                         'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-                        index !== menuOptions.length - 1 ? 'border-b-[1px] border-blackA-A3' : '',
+                        index !== menuOptions.length - 1 ? `border-b-[1px] ${borderColor}` : '', // Aplicar borderColor
                       )}>
                       <Animated.Text
                         style={tailwind.style(
-                          'text-base text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+                          'text-base font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+                          textColor, // Aplicar textColor
                         )}>
                         {option.title}
                       </Animated.Text>
@@ -172,6 +180,7 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
               key={option.title}
               onSelect={option.handleOnPressMenuOption}
               destructive={option.destructive}>
+              {/* O option.icon e o ContextMenu.ItemTitle devem lidar com suas próprias cores via useThemeColors */}
               {option.icon}
               <ContextMenu.ItemTitle>{option.title}</ContextMenu.ItemTitle>
             </ContextMenuItem>

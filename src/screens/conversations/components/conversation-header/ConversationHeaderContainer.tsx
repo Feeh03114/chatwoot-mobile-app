@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { useColorScheme } from 'react-native';
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -42,6 +43,7 @@ const getFiltersAppliedCount = (defaultState: FilterState, updatedState: FilterS
 
 export const ConversationHeader = () => {
   const currentState = useAppSelector(selectCurrentState);
+  const colorScheme = useColorScheme();
 
   const filters = useAppSelector(selectFilters);
   const dispatch = useAppDispatch();
@@ -62,7 +64,10 @@ export const ConversationHeader = () => {
 
   const hapticSuccess = useHaptic('success');
 
-  const headerBorderColor = tailwind.color('text-blackA-A3') as string;
+  const headerBorderColor =
+    colorScheme === 'dark'
+      ? (tailwind.color('text-whiteA-A3') as string)
+      : (tailwind.color('text-blackA-A3') as string);
 
   const headerOpenState = useDerivedValue(() =>
     currentState !== 'none' && currentState !== 'Select' ? withSpring(1) : withSpring(0),
@@ -77,7 +82,7 @@ export const ConversationHeader = () => {
         [headerBorderColor, 'transparent'],
       ),
     };
-  }, []);
+  }, [headerBorderColor]);
 
   useEffect(() => {
     if (currentState !== 'none') {

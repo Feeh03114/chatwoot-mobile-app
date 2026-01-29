@@ -7,6 +7,7 @@ import { TickIcon } from '@/svg-icons';
 import { tailwind } from '@/theme';
 import { useHaptic } from '@/utils';
 import { Icon } from '@/components-next/common';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 export type LanguageItemType = {
   title: string;
@@ -30,6 +31,7 @@ const languagesList = Object.keys(LANGUAGES).map(languageCode => {
 const LanguageCell = (props: LanguageCellProps) => {
   const { item, index, currentLanguage, onChangeLanguage } = props;
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
   const handlePress = () => {
     hapticSelection?.();
     onChangeLanguage(item.key);
@@ -52,7 +54,7 @@ const LanguageCell = (props: LanguageCellProps) => {
             )}>
             {item.title}
           </Animated.Text>
-          {isSelected && <Icon icon={<TickIcon />} size={20} />}
+          {isSelected && <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} />}
         </Animated.View>
       </Animated.View>
     </Pressable>

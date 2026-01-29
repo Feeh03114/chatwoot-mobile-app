@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'; // Adicionado useCallback
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import Animated, { LinearTransition, useAnimatedStyle, withTiming } from 'react-native-reanimated'; // Adicionado LinearTransition, useAnimatedStyle, withTiming
 import { BottomSheetModal, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 
@@ -24,6 +24,7 @@ export const InboxHeader = (props: InboxHeaderProps) => {
   const { inboxFiltersSheetRef } = useRefsContext();
   const dispatch = useAppDispatch();
   const currentSearchText = useAppSelector(selectSearchText);
+  const colorScheme = useColorScheme();
 
   const [showSearchInput, setShowSearchInput] = useState(false);
 
@@ -31,7 +32,8 @@ export const InboxHeader = (props: InboxHeaderProps) => {
     inboxFiltersSheetRef.current?.present();
   };
 
-  const handleSearchIconPress = useCallback(() => { // Usar useCallback
+  const handleSearchIconPress = useCallback(() => {
+    // Usar useCallback
     setShowSearchInput(prev => {
       if (prev) {
         // Se estava mostrando e vai fechar, limpar o texto de busca
@@ -41,7 +43,8 @@ export const InboxHeader = (props: InboxHeaderProps) => {
     });
   }, [dispatch]);
 
-  const handleClearSearchText = useCallback(() => { // Novo handler para limpar o texto
+  const handleClearSearchText = useCallback(() => {
+    // Novo handler para limpar o texto
     dispatch(setSearchText(''));
   }, [dispatch]);
 
@@ -58,48 +61,62 @@ export const InboxHeader = (props: InboxHeaderProps) => {
     };
   });
 
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('grayDark-950')
+      : tailwind.color('gray-950');
+
+  const closeIconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('whiteA-A9')
+      : tailwind.color('blackA-A9');
+
   return (
-    <Animated.View layout={LinearTransition.springify().duration(250)} style={[tailwind.style('border-b-[1px] border-b-blackA-A3')]}>
+    <Animated.View
+      layout={LinearTransition.springify().duration(250)}
+      style={[tailwind.style('border-b-[1px] border-b-blackA-A3 dark:border-b-whiteA-A3')]}>
       <Animated.View
         style={[
           tailwind.style('flex flex-row justify-between items-center px-4 pt-2 pb-[12px]'),
-          showSearchInput ? tailwind.style('bg-gray-100') : tailwind.style('bg-white') // Fundo do header
-        ]}
-      >
+          showSearchInput
+            ? tailwind.style('bg-gray-100 dark:bg-grayDark-100')
+            : tailwind.style('bg-brand-background dark:bg-brand-background-dark'), // Fundo do header
+        ]}>
         {showSearchInput ? (
           <SearchBar
             isActive={showSearchInput}
             value={currentSearchText}
             onChangeText={text => dispatch(setSearchText(text))}
-            leftIcon={<CloseIcon />}
+            leftIcon={<CloseIcon stroke={closeIconColor} />}
             onLeftIconPress={handleSearchIconPress}
-            rightIcon={currentSearchText ? <CloseIcon /> : undefined} // Ícone X para limpar texto
+            rightIcon={currentSearchText ? <CloseIcon stroke={closeIconColor} /> : undefined} // Ícone X para limpar texto
             onRightIconPress={handleClearSearchText}
             wrapperStyle={tailwind.style('flex-1')}
-            inputStyle={tailwind.style('bg-white')} // Cor de fundo do input
+            inputStyle={tailwind.style('bg-brand-background dark:bg-brand-background-dark')} // Cor de fundo do input
             placeholder={i18n.t('NOTIFICATION.SEARCH_PLACEHOLDER')} // Placeholder para busca
           />
         ) : (
           <>
             <Animated.View style={tailwind.style('flex-1')}>
               <Pressable hitSlop={16} onPress={markAllAsRead}>
-                <Icon icon={<DoubleCheckIcon />} size={24} />
+                <Icon icon={<DoubleCheckIcon stroke={iconColor} />} size={24} />
               </Pressable>
             </Animated.View>
             <Animated.View style={tailwind.style('flex-1')}>
               <Animated.Text
                 style={tailwind.style(
-                  'text-[17px] text-center leading-[17px] tracking-[0.32px] font-inter-medium-24 text-gray-950',
+                  'text-[17px] text-center leading-[17px] tracking-[0.32px] font-inter-medium-24 text-gray-950 dark:text-grayDark-950',
                 )}>
                 {i18n.t('NOTIFICATION.INBOX')}
               </Animated.Text>
             </Animated.View>
-            <Animated.View style={tailwind.style('flex-1 items-end flex-row justify-end space-x-4 gap-4')}>
+            <Animated.View
+              style={tailwind.style('flex-1 items-end flex-row justify-end space-x-4 gap-4')}>
               <Pressable hitSlop={16} onPress={handleSearchIconPress}>
-                <Icon icon={<SearchIcon />} size={24} />
+                <Icon icon={<SearchIcon stroke={iconColor} />} size={24} />
               </Pressable>
               <Pressable onPress={handleToggleState} hitSlop={16}>
-                <Icon icon={<InboxFilterIcon />} size={24} />
+                <Icon icon={<InboxFilterIcon stroke={iconColor} />} size={24} />
               </Pressable>
             </Animated.View>
           </>
@@ -108,7 +125,9 @@ export const InboxHeader = (props: InboxHeaderProps) => {
       <BottomSheetModal
         ref={inboxFiltersSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
         style={tailwind.style('rounded-[26px] overflow-hidden')}
         animationConfigs={animationConfigs}

@@ -9,6 +9,7 @@ import { tailwind } from '@/theme';
 import { useHaptic, useScaleAnimation } from '@/utils';
 import i18n from '@/i18n';
 import { openNumber, openEmail } from '@/utils/urlUtils';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type ContactOption = {
   contactType: 'call' | 'email';
@@ -50,7 +51,7 @@ const ContactOptionComponent = (props: ContactOptionProps) => {
         <Animated.Text
           numberOfLines={1}
           style={tailwind.style(
-            'text-cxs font-inter-medium-24 leading-[15px] tracking-[0.32px] text-center text-blue-800 pt-2',
+            'text-cxs font-inter-medium-24 leading-[15px] tracking-[0.32px] text-center text-brand-primary pt-2',
           )}>
           {option.contactType}
         </Animated.Text>
@@ -66,6 +67,7 @@ type ContactBasicActionsProps = {
 
 export const ContactBasicActions = (props: ContactBasicActionsProps) => {
   const { phoneNumber, email } = props;
+  const { getThemedColor } = useThemeColors();
 
   const onCallPress = () => {
     openNumber({ phoneNumber });
@@ -86,7 +88,7 @@ export const ContactBasicActions = (props: ContactBasicActionsProps) => {
           key="email"
           option={{
             contactType: i18n.t('CONTACT_DETAILS.EMAIL'),
-            icon: <MailIcon strokeWidth={2} stroke={tailwind.color('bg-blue-800')} />,
+            icon: <MailIcon strokeWidth={2} stroke={tailwind.color('brand-primary')} />,
           }}
           handleOptionPress={onEmailPress}
         />
@@ -94,7 +96,7 @@ export const ContactBasicActions = (props: ContactBasicActionsProps) => {
           key="phoneNumber"
           option={{
             contactType: i18n.t('CONTACT_DETAILS.CALL'),
-            icon: <PhoneIcon strokeWidth={2} stroke={tailwind.color('bg-blue-800')} />,
+            icon: <PhoneIcon strokeWidth={2} stroke={tailwind.color('brand-primary')} />,
           }}
           handleOptionPress={onCallPress}
         />

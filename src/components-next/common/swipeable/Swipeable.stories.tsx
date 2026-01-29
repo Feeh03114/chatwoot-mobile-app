@@ -55,7 +55,7 @@ const RightElement = () => (
 );
 
 const SwipeableContent = () => (
-  <View style={tailwind.style('bg-white p-4 border-b border-gray-200')}>
+  <View style={tailwind.style('bg-brand-background p-4 border-b border-gray-200')}>
     <Text style={tailwind.style('text-base')}>Swipe me left or right</Text>
   </View>
 );

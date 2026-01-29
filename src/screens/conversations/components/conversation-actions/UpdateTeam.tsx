@@ -18,6 +18,7 @@ import i18n from '@/i18n';
 import { CONVERSATION_EVENTS } from '@/constants/analyticsEvents';
 import AnalyticsHelper from '@/utils/analyticsUtils';
 import { filterTeams } from '@/store/team/teamSelectors';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type TeamCellProps = {
   value: Team;
@@ -31,6 +32,7 @@ const TeamCell = (props: TeamCellProps) => {
 
   const { actionsModalSheetRef } = useRefsContext();
   const selectedConversation = useAppSelector(selectSelectedConversation);
+  const { getThemedColor } = useThemeColors();
 
   const handleAssigneePress = async () => {
     if (!selectedConversation?.id) return;
@@ -63,7 +65,7 @@ const TeamCell = (props: TeamCellProps) => {
           ]}>
           {value.name}
         </Animated.Text>
-        {teamId === value.id ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {teamId === value.id ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

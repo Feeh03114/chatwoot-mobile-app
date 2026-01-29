@@ -26,7 +26,7 @@ export const ConversationSettingsPanel = ({
   onChangePriority,
 }: ConversationSettingsPanelProps) => {
   return (
-    <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-white'), styles.listShadow]}>
+    <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background'), styles.listShadow]}>
       <AssigneePanel assignee={assignee} onPress={onChangeAssignee} />
       <TeamPanel team={team} onPress={onChangeTeamAssignee} />
       <PriorityPanel priority={priority} onPress={onChangePriority} />
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 4,
-        backgroundColor: 'white',
+        backgroundColor: tailwind.color('brand-background'),
       },
     }) || {}, // Add fallback empty object
 });

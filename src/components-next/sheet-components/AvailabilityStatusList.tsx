@@ -7,6 +7,7 @@ import { tailwind } from '@/theme';
 import { AvailabilityStatus, AvailabilityStatusListItemType } from '@/types';
 import { useHaptic } from '@/utils';
 import { Icon } from '@/components-next/common/icon';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type StatusCellProps = {
   item: AvailabilityStatusListItemType;
@@ -22,6 +23,7 @@ const StatusCell = ({
   changeAvailabilityStatus,
 }: StatusCellProps) => {
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
 
   const handlePress = () => {
     hapticSelection?.();
@@ -46,7 +48,7 @@ const StatusCell = ({
             )}>
             {item.status}
           </Text>
-          {isSelected && <Icon icon={<TickIcon />} size={20} />}
+          {isSelected && <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} />}
         </Animated.View>
       </Animated.View>
     </Pressable>

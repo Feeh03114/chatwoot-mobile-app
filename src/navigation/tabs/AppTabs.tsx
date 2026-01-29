@@ -38,6 +38,7 @@ import { clearAllDeliveredNotifications } from '@/utils/pushUtils';
 import { dashboardAppActions } from '@/store/dashboard-app/dashboardAppActions';
 import { customAttributeActions } from '@/store/custom-attribute/customAttributeActions';
 import { clearSelection } from '@/store/conversation/conversationSelectedSlice';
+import { tailwind } from '@/theme/tailwind';
 
 const Tab = createBottomTabNavigator();
 
@@ -153,7 +154,13 @@ const Tabs = () => {
   }, []);
 
   return (
-    <Tab.Navigator tabBar={CustomTabBar} initialRouteName="Inbox">
+    <Tab.Navigator
+      tabBar={CustomTabBar}
+      initialRouteName="Inbox"
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { backgroundColor: tailwind.color('bg-brand-background dark:bg-brand-background-dark') },
+      }}>
       {hasConversationPermission && (
         <Tab.Screen name="Inbox" component={InboxStack} options={{ headerShown: false }} />
       )}
@@ -174,7 +181,11 @@ export const AppTabs = () => {
 
   if (isLoggedIn) {
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: tailwind.color('bg-brand-background dark:bg-brand-background-dark') },
+        }}>
         <Stack.Screen name="Tab" component={Tabs} />
         <Stack.Screen
           options={{ animation: 'slide_from_right' }}

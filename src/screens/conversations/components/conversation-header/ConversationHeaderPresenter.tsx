@@ -1,14 +1,8 @@
 import React from 'react';
-import { Pressable, Text, ViewStyle } from 'react-native';
+import { Pressable, Text, ViewStyle, useColorScheme } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Icon } from '@/components-next/common';
-import {
-  CheckedIcon,
-  CloseIcon,
-  FilterIcon,
-  UncheckedIcon,
-  SearchIcon,
-} from '@/svg-icons';
+import { CheckedIcon, CloseIcon, FilterIcon, UncheckedIcon, SearchIcon } from '@/svg-icons';
 import { tailwind } from '@/theme';
 import i18n from '@/i18n';
 import { useScaleAnimation } from '@/utils';
@@ -52,19 +46,16 @@ const HeaderTitle = () => (
   <Animated.View style={tailwind.style('flex-1')}>
     <Text
       style={tailwind.style(
-        'text-[17px] font-inter-medium-24 tracking-[0.32px] leading-[17px] text-center text-gray-950',
+        'text-[17px] font-inter-medium-24 tracking-[0.32px] leading-[17px] text-center text-gray-950 dark:text-grayDark-950',
       )}>
       {i18n.t('CONVERSATION.HEADER.TITLE')}
     </Text>
   </Animated.View>
 );
 
-const LeftSection = ({
-  currentState,
-  isSelectedAll,
-  onLeftIconPress,
-}: LeftSectionProps) => {
+const LeftSection = ({ currentState, isSelectedAll, onLeftIconPress }: LeftSectionProps) => {
   const { entering, exiting } = useHeaderAnimation();
+  const colorScheme = useColorScheme();
 
   if (currentState === 'Filter' || currentState === 'Search') return null;
   if (currentState !== 'Select') {
@@ -79,6 +70,11 @@ const LeftSection = ({
     );
   }
 
+  const uncheckedIconStrokeColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-800')
+      : tailwind.color('text-gray-800');
+
   return (
     <Animated.View style={tailwind.style('flex-1 items-start')}>
       <Pressable onPress={onLeftIconPress} hitSlop={16}>
@@ -89,7 +85,7 @@ const LeftSection = ({
               isSelectedAll ? (
                 <CheckedIcon />
               ) : (
-                <UncheckedIcon stroke={tailwind.color('text-gray-800')} />
+                <UncheckedIcon stroke={uncheckedIconStrokeColor} />
               )
             }
           />
@@ -112,15 +108,17 @@ const FilterSection = ({
       style={[tailwind.style('flex-1'), animatedStyle]}
       exiting={exiting}
       entering={entering}>
-      <Pressable
-        onPress={onClearFilter}
-        disabled={filtersAppliedCount === 0}
-        {...handlers}>
+      <Pressable onPress={onClearFilter} disabled={filtersAppliedCount === 0} {...handlers}>
         <Text
-          style={tailwind.style(
-            'text-md font-inter-medium-24 leading-[17px] tracking-[0.24px]',
-            filtersAppliedCount === 0 ? 'text-gray-700' : 'text-blue-800',
-          )}>
+          style={
+            filtersAppliedCount > 0
+              ? tailwind.style(
+                  'text-md font-inter-medium-24 leading-[17px] tracking-[0.24px] text-brand-primary dark:text-brand-primary-dark',
+                )
+              : tailwind.style(
+                  'text-md font-inter-medium-24 leading-[17px] tracking-[0.24px] text-gray-700 dark:text-grayDark-700',
+                )
+          }>
           {i18n.t('CONVERSATION.HEADER.CLEAR_FILTER')}
           {filtersAppliedCount > 0 ? ` (${filtersAppliedCount})` : ''}
         </Text>
@@ -135,24 +133,30 @@ const RightSection = ({
   onRightIconPress,
 }: RightSectionProps) => {
   const { entering, exiting } = useHeaderAnimation();
+  const colorScheme = useColorScheme();
+
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-whiteA-A9')
+      : tailwind.color('text-blackA-A9');
 
   return (
     <Animated.View style={tailwind.style('flex-1 items-end')}>
       <Pressable onPress={onRightIconPress} hitSlop={16}>
         {currentState === 'Filter' || currentState === 'Select' ? (
           <Animated.View exiting={exiting} entering={entering}>
-            <Icon size={24} icon={<CloseIcon />} />
+            <Icon size={24} icon={<CloseIcon stroke={iconColor} />} />
           </Animated.View>
         ) : (
           <Animated.View exiting={exiting} entering={entering}>
             {filtersAppliedCount > 0 && (
               <Animated.View
                 style={tailwind.style(
-                  'absolute z-10 -right-0.5 h-2.5 w-2.5 rounded-full bg-blue-800',
+                  'absolute z-10 -right-0.5 h-2.5 w-2.5 rounded-full bg-brand-primary dark:bg-brand-primary-dark',
                 )}
               />
             )}
-            <Icon size={24} icon={<FilterIcon />} />
+            <Icon size={24} icon={<FilterIcon stroke={iconColor} />} />
           </Animated.View>
         )}
       </Pressable>
@@ -172,6 +176,7 @@ export const ConversationHeaderPresenter = ({
   onClearSearch,
 }: ConversationHeaderPresenterProps) => {
   const { handlers, animatedStyle } = useScaleAnimation();
+  const colorScheme = useColorScheme();
 
   if (currentState === 'Search') {
     return (
@@ -179,18 +184,23 @@ export const ConversationHeaderPresenter = ({
       // which prevents the list from scrolling over it.
       <Animated.View
         style={[
-          tailwind.style(
-            'flex flex-row justify-between items-center px-4 pt-2 pb-[12px]',
-          ),
-        ]}
-      >
+          tailwind.style('flex flex-row justify-between items-center px-4 pt-2 pb-[12px]'),
+        ]}>
         <SearchBar
           isActive
           value={searchText}
           onChangeText={onSearchTextChange}
           placeholder={i18n.t('CONVERSATION.SEARCH_PLACEHOLDER')}
           onRightIconPress={onClearSearch}
-          rightIcon={<CloseIcon />}
+          rightIcon={
+            <CloseIcon
+              stroke={
+                colorScheme === 'dark'
+                  ? tailwind.color('text-whiteA-A9')
+                  : tailwind.color('text-blackA-A9')
+              }
+            />
+          }
         />
       </Animated.View>
     );
@@ -199,9 +209,7 @@ export const ConversationHeaderPresenter = ({
   return (
     <Animated.View
       style={[
-        tailwind.style(
-          'flex flex-row justify-between items-center px-4 pt-2 pb-[12px]',
-        ),
+        tailwind.style('flex flex-row justify-between items-center px-4 pt-2 pb-[12px]'),
       ]}>
       <LeftSection
         currentState={currentState}

@@ -6,6 +6,7 @@ import { tailwind } from '@/theme';
 import { useHaptic } from '@/utils';
 import { Icon } from '@/components-next/common/icon';
 import { Account } from '@/types';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type AccountCellProps = {
   item: Account;
@@ -23,6 +24,7 @@ const AccountCell = ({
   isLastItem,
 }: AccountCellProps) => {
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
 
   const handlePress = () => {
     hapticSelection?.();
@@ -53,7 +55,7 @@ const AccountCell = ({
               {item.role}
             </Text>
           </View>
-          {isSelected && <Icon icon={<TickIcon />} size={20} />}
+          {isSelected && <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} />}
         </Animated.View>
       </Animated.View>
     </Pressable>

@@ -2,23 +2,23 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
-    name: 'Chatwoot',
-    slug: process.env.EXPO_PUBLIC_APP_SLUG || 'chatwoot-mobile',
+    name: 'AtenXP',
+    slug: process.env.EXPO_PUBLIC_APP_SLUG || 'atenxp-mobile',
     version: '4.3.13',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'automatic',
     newArchEnabled: false,
     scheme: 'chatwootapp',
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#000000',
       enableFullScreenImage_legacy: true,
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.chatwoot.app',
+      bundleIdentifier: 'com.waxp.atendxp',
       infoPlist: {
         NSCameraUsageDescription:
           'This app requires access to the camera to upload images and videos.',
@@ -31,16 +31,16 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         ITSAppUsesNonExemptEncryption: false,
       },
       // Please use the relative path to the google-services.json file
-      googleServicesFile: process.env.EXPO_PUBLIC_IOS_GOOGLE_SERVICES_FILE,
+      googleServicesFile: './GoogleService-Info.plist',
       entitlements: { 'aps-environment': 'production' },
       associatedDomains: ['applinks:app.chatwoot.com'],
     },
     android: {
-      adaptiveIcon: { foregroundImage: './assets/adaptive-icon.png', backgroundColor: '#ffffff' },
-      package: 'com.chatwoot.app',
+      adaptiveIcon: { foregroundImage: './assets/adaptive-icon.png', backgroundColor: '#000000' },
+      package: 'com.waxp.atendxp',
       permissions: ['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'],
       // Please use the relative path to the google-services.json file
-      googleServicesFile: process.env.EXPO_PUBLIC_ANDROID_GOOGLE_SERVICES_FILE,
+      googleServicesFile: './google-services.json',
       intentFilters: [
         {
           action: 'VIEW',
@@ -68,22 +68,21 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     extra: {
       eas: {
-        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
-        storybookEnabled: process.env.EXPO_STORYBOOK_ENABLED,
+        projectId: '0afb2e98-ef49-4bbb-93e5-424eaa53da85',
       },
     },
-    owner: 'chatwoot',
     plugins: [
       'expo-font',
+      'expo-localization',
       ['react-native-permissions', { iosPermissions: ['Camera', 'PhotoLibrary', 'MediaLibrary'] }],
-      [
-        '@sentry/react-native/expo',
-        {
-          url: 'https://sentry.io/',
-          project: process.env.EXPO_PUBLIC_SENTRY_PROJECT_NAME,
-          organization: process.env.EXPO_PUBLIC_SENTRY_ORG_NAME,
-        },
-      ],
+    [
+      '@sentry/react-native/expo',
+      {
+        url: 'https://sentry.io/',
+        project: process.env.EXPO_PUBLIC_SENTRY_PROJECT_NAME,
+        organization: process.env.EXPO_PUBLIC_SENTRY_ORG_NAME,
+      },
+    ],
       '@react-native-firebase/app',
       '@react-native-firebase/messaging',
       [
@@ -101,6 +100,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ],
       './with-ffmpeg-pod.js',
     ],
-    androidNavigationBar: { backgroundColor: '#ffffff' },
+    androidNavigationBar: { backgroundColor: '#000000' },
   };
 };

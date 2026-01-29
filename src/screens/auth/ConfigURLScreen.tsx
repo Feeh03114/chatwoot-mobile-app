@@ -46,13 +46,13 @@ const ConfigURLScreen = () => {
   };
 
   return (
-    <SafeAreaView style={tailwind.style('flex-1 bg-white')}>
+    <SafeAreaView style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
         translucent
-        backgroundColor={tailwind.color('bg-white')}
+        backgroundColor={tailwind.color('bg-brand-background')}
         barStyle={'dark-content'}
       />
-      <View style={tailwind.style('flex-1 bg-white')}>
+      <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tailwind.style('px-6 pt-16')}>

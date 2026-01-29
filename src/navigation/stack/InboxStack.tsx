@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator<InboxStackParamList>();
 
 export const InboxStack = () => {
   return (
-    <Stack.Navigator initialRouteName="InboxScreen">
+    <Stack.Navigator initialRouteName="InboxScreen" screenOptions={{ headerShown: false,  }}>
       <Stack.Screen options={{ headerShown: false }} name="InboxScreen" component={InboxScreen} />
     </Stack.Navigator>
   );

@@ -17,6 +17,7 @@ import { TickIcon } from '@/svg-icons/common';
 import { CONVERSATION_EVENTS } from '@/constants/analyticsEvents';
 import { showToast } from '@/utils/toastUtils';
 import AnalyticsHelper from '@/utils/analyticsUtils';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type PriorityCellProps = {
   value: {
@@ -38,6 +39,8 @@ const PriorityList = [
 
 const PriorityCell = (props: PriorityCellProps) => {
   const { value, isLastItem, onPress, selectedPriority } = props;
+  const { getThemedColor } = useThemeColors();
+
   return (
     <Pressable onPress={() => onPress()} style={tailwind.style('flex flex-row items-center')}>
       <Animated.View>{/* <Icon icon={value.icon} size={24} /> */}</Animated.View>
@@ -52,7 +55,7 @@ const PriorityCell = (props: PriorityCellProps) => {
           )}>
           {i18n.t(`CONVERSATION.PRIORITY.OPTIONS.${PriorityOptions[value.id].toUpperCase()}`)}
         </Animated.Text>
-        {selectedPriority === value.id ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {selectedPriority === value.id ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

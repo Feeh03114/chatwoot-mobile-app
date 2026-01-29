@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import type { Meta } from '@storybook/react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -58,7 +58,7 @@ const BaseBottomSheet = ({ children }: { children: React.ReactNode }) => {
     <Provider store={mockStore}>
       <BottomSheetModalProvider>
         <RefsProvider>
-          <View style={tailwind.style('flex-1 bg-white p-4')}>
+          <View style={tailwind.style('flex-1 bg-brand-background p-4')}>
             <BottomSheetModal
               ref={filtersModalSheetRef}
               backdropComponent={BottomSheetBackdrop}
@@ -88,9 +88,10 @@ export default {
 } satisfies Meta<typeof StatusFilters>;
 
 export const Status = () => {
+  const colorScheme = useColorScheme();
   return (
     <BaseBottomSheet>
-      <StatusFilters />
+      <StatusFilters colorScheme={colorScheme} />
     </BaseBottomSheet>
   );
 };

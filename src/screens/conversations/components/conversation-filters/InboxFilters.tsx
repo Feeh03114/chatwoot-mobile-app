@@ -13,6 +13,7 @@ import { selectAllInboxes } from '@/store/inbox/inboxSelectors';
 import { getChannelIcon } from '@/utils';
 import { Channel } from '@/types';
 import i18n from '@/i18n';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type InboxCellProps = {
   value: { id: number; name: string; channelType: Channel; medium: string };
@@ -26,12 +27,17 @@ const InboxCell = (props: InboxCellProps) => {
 
   const filters = useAppSelector(selectFilters);
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
 
   const handlePreferredAssigneeTypePress = () => {
     hapticSelection?.();
     dispatch(setFilters({ key: 'inbox_id', value: value.id.toString() }));
     setTimeout(() => filtersModalSheetRef.current?.dismiss({ overshootClamping: true }), 1);
   };
+
+  const borderColor = getThemedColor('border-blackA-A3', 'border-grayDark-300');
+  const textColor = getThemedColor('text-gray-950', 'text-grayDark-950');
+  const tickIconColor = getThemedColor('brand-primary', 'brand-primary-dark');
 
   return (
     <Pressable
@@ -40,7 +46,7 @@ const InboxCell = (props: InboxCellProps) => {
       <Animated.View
         style={tailwind.style(
           'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-          !isLastItem ? 'border-b-[1px] border-blackA-A3' : '',
+          !isLastItem ? `border-b-[1px] ${borderColor}` : '',
         )}>
         <Animated.View style={tailwind.style('flex-row items-center')}>
           <Icon
@@ -51,12 +57,13 @@ const InboxCell = (props: InboxCellProps) => {
 
           <Animated.Text
             style={tailwind.style(
-              'text-base text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize ml-2',
+              'text-base font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize ml-2',
+              textColor,
             )}>
             {value.name}
           </Animated.Text>
         </Animated.View>
-        {filters.inbox_id === value.id.toString() ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {filters.inbox_id === value.id.toString() ? <Icon icon={<TickIcon stroke={tickIconColor} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

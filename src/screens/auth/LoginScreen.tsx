@@ -32,8 +32,11 @@ import {
 } from '@/store/settings/settingsSelectors';
 import { selectIsLoggingIn } from '@/store/auth/authSelectors';
 import { setLocale } from '@/store/settings/settingsSlice';
+import { selectTheme } from '@/store/settings/settingsSelectors';
 import { useRefsContext } from '@/context/RefsContext';
 import { SsoUtils } from '@/utils/ssoUtils';
+import { Theme } from '@/types/common/Theme';
+// import { useThemeColors } from '@/hooks/useThemeColors'; // Importar useThemeColors
 
 type FormData = {
   email: string;
@@ -68,6 +71,8 @@ const LoginScreen = () => {
   const installationUrl = useAppSelector(selectInstallationUrl);
   const baseUrl = useAppSelector(selectBaseUrl);
   const activeLocale = useAppSelector(selectLocale);
+  const theme = useAppSelector(selectTheme); // Obter o tema atual
+  // const { getThemedColor } = useThemeColors(); // Inicializar useThemeColors
 
   useEffect(() => {
     languagesModalSheetRef.current?.dismiss({
@@ -138,31 +143,24 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
+    <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
         translucent
-        backgroundColor={tailwind.color('bg-white')}
-        barStyle={'dark-content'}
+        backgroundColor={tailwind.color('bg-brand-background')}
+        barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
       />
-      <View style={tailwind.style('flex-1 bg-white')}>
+      <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tailwind.style('px-6 pt-24')}>
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-            source={require('@/assets/images/logo.png')}
-            style={tailwind.style('w-10 h-10')}
+            source={theme === 'dark' ? require('@/assets/images/logo_dark.png') : require('@/assets/images/logo_light.png')}
+            style={tailwind.style('w-52 h-16 mx-auto')}
             resizeMode="contain"
           />
           <View style={tailwind.style('pt-6 gap-4')}>
-            <Animated.Text style={tailwind.style('text-2xl text-gray-950 font-inter-semibold-20')}>
+            <Animated.Text style={tailwind.style('text-2xl text-gray-950 dark:text-grayDark-50 font-inter-semibold-20')}>
               {i18n.t('LOGIN.TITLE')}
-            </Animated.Text>
-            <Animated.Text
-              style={tailwind.style(
-                'font-inter-normal-20 leading-[18px] tracking-[0.32px] text-gray-900',
-              )}>
-              {i18n.t('LOGIN.DESCRIPTION', { baseUrl })}
             </Animated.Text>
           </View>
 
@@ -178,11 +176,11 @@ const LoginScreen = () => {
               />
 
               <View style={tailwind.style('flex-row items-center my-6')}>
-                <View style={tailwind.style('flex-1 h-px bg-gray-300')} />
-                <Animated.Text style={tailwind.style('px-4 text-sm text-gray-600')}>
+                <View style={tailwind.style('flex-1 h-px bg-gray-300 dark:bg-grayDark-700')} />
+                <Animated.Text style={tailwind.style('px-4 text-sm text-gray-600 dark:text-grayDark-300')}>
                   OR
                 </Animated.Text>
-                <View style={tailwind.style('flex-1 h-px bg-gray-300')} />
+                <View style={tailwind.style('flex-1 h-px bg-gray-300 dark:bg-grayDark-700')} />
               </View>
             </View>
           )}
@@ -198,21 +196,21 @@ const LoginScreen = () => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={tailwind.style('pt-2 gap-2')}>
-                <Animated.Text style={tailwind.style('font-inter-420-20 text-gray-950')}>
+                <Animated.Text style={tailwind.style('font-inter-420-20 text-gray-950 dark:text-grayDark-50')}>
                   {i18n.t('LOGIN.EMAIL')}
                 </Animated.Text>
                 <TextInput
                   style={[
                     tailwind.style(
                       'text-base font-inter-normal-20 tracking-[0.24px] leading-[20px] android:leading-[18px]',
-                      'py-2 px-3 rounded-xl text-gray-950 bg-blackA-A4',
+                      'py-2 px-3 rounded-xl text-gray-950 dark:text-grayDark-50 bg-blackA-A4 dark:bg-grayDark-900',
                       'h-10',
                     ),
                   ]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  placeholderTextColor={tailwind.color('text-gray-900')}
+                  placeholderTextColor={tailwind.color('text-gray-900 dark:text-grayDark-100')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -237,23 +235,22 @@ const LoginScreen = () => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={tailwind.style('pt-8 gap-2')}>
-                <Animated.Text style={tailwind.style('font-inter-420-20  text-gray-950')}>
+                <Animated.Text style={tailwind.style('font-inter-420-20  text-gray-950 dark:text-grayDark-50')}>
                   {i18n.t('LOGIN.PASSWORD')}
                 </Animated.Text>
                 <View style={tailwind.style('relative')}>
                   <TextInput
-                    style={[
-                      tailwind.style(
-                        'text-base font-inter-normal-20 tracking-[0.24px] leading-[20px] android:leading-[18px]',
-                        'py-2 pl-3 pr-10 rounded-xl text-gray-950 bg-blackA-A4',
-                        'h-10',
-                      ),
-                    ]}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    placeholderTextColor={tailwind.color('text-gray-500')}
-                    secureTextEntry={!showPassword}
+                                      style={[
+                                        tailwind.style(
+                                          'text-base font-inter-normal-20 tracking-[0.24px] leading-[20px] android:leading-[18px]',
+                                          'py-2 pl-3 pr-10 rounded-xl text-gray-950 dark:text-grayDark-50 bg-blackA-A4 dark:bg-grayDark-900',
+                                          'h-10',
+                                        ),
+                                      ]}
+                                      onBlur={onBlur}
+                                      onChangeText={onChange}
+                                      value={value}
+                                      placeholderTextColor={tailwind.color('text-gray-500 dark:text-grayDark-100')}                    secureTextEntry={!showPassword}
                   />
                   <Pressable
                     style={tailwind.style('absolute right-4 top-2.5')}
@@ -272,7 +269,7 @@ const LoginScreen = () => {
           />
 
           <Pressable style={tailwind.style('pt-1 mb-8')} onPress={openResetPassword}>
-            <Animated.Text style={tailwind.style('text-blue-800 font-inter-medium-24 text-right')}>
+            <Animated.Text style={tailwind.style('text-brand-primary font-inter-medium-24 text-right')}>
               {i18n.t('LOGIN.FORGOT_PASSWORD')}
             </Animated.Text>
           </Pressable>

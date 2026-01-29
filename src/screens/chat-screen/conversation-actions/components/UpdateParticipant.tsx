@@ -19,6 +19,7 @@ import i18n from '@/i18n';
 import { CONVERSATION_EVENTS } from '@/constants/analyticsEvents';
 import AnalyticsHelper from '@/utils/analyticsUtils';
 import { conversationParticipantActions } from '@/store/conversation-participant/conversationParticipantActions';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type ParticipantCellProps = {
   value: Agent & { isParticipant: boolean };
@@ -28,6 +29,7 @@ type ParticipantCellProps = {
 
 const ParticipantCell = (props: ParticipantCellProps) => {
   const { value, lastItem, onPress } = props;
+  const { getThemedColor } = useThemeColors();
 
   return (
     <Pressable onPress={() => onPress(value)} style={tailwind.style('flex flex-row items-center')}>
@@ -45,7 +47,7 @@ const ParticipantCell = (props: ParticipantCellProps) => {
           ]}>
           {value.name}
         </Animated.Text>
-        {value.isParticipant ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {value.isParticipant ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

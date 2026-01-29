@@ -13,10 +13,12 @@ import { BottomSheetHeader, Icon } from '@/components-next';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import i18n from '@/i18n';
 import { StatusOptions } from '@/types';
+import { ColorSchemeName } from 'react-native';
 
 type StatusCellProps = {
   value: StatusCollection;
   index: number;
+  colorScheme: ColorSchemeName;
 };
 
 export const status: StatusCollection[] = [
@@ -29,7 +31,7 @@ export const status: StatusCollection[] = [
 
 const StatusCell = (props: StatusCellProps) => {
   const { filtersModalSheetRef } = useRefsContext();
-  const { value, index } = props;
+  const { value, index, colorScheme } = props;
   const filters = useAppSelector(selectFilters);
   const dispatch = useAppDispatch();
   const hapticSelection = useHaptic();
@@ -40,6 +42,11 @@ const StatusCell = (props: StatusCellProps) => {
     setTimeout(() => filtersModalSheetRef.current?.dismiss({ overshootClamping: true }), 1);
   };
 
+  const borderColor = colorScheme === 'dark' ? tailwind.color('border-grayDark-300') : tailwind.color('border-blackA-A3');
+  const textColor = colorScheme === 'dark' ? tailwind.color('text-grayDark-950') : tailwind.color('text-gray-950');
+  const tickIconColor = colorScheme === 'dark' ? tailwind.color('brand-primary-dark') : tailwind.color('brand-primary');
+
+
   return (
     <Pressable onPress={handleStatusPress} style={tailwind.style('flex flex-row items-center')}>
       <Animated.View>
@@ -48,15 +55,16 @@ const StatusCell = (props: StatusCellProps) => {
       <Animated.View
         style={tailwind.style(
           'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-          index !== status.length - 1 ? 'border-b-[1px] border-blackA-A3' : '',
+          index !== status.length - 1 ? `border-b-[1px] ${borderColor}` : '',
         )}>
         <Animated.Text
           style={tailwind.style(
-            'text-base text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+            'text-base font-inter-420-20 leading-[21px] tracking-[0.16px] capitalize',
+            textColor,
           )}>
           {i18n.t(`CONVERSATION.FILTERS.STATUS.OPTIONS.${StatusOptions[value.id].toUpperCase()}`)}
         </Animated.Text>
-        {filters.status === value.id ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {filters.status === value.id ? <Icon icon={<TickIcon stroke={tickIconColor} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );
@@ -64,25 +72,26 @@ const StatusCell = (props: StatusCellProps) => {
 
 type StatusStackProps = {
   statusList: StatusCollection[];
+  colorScheme: ColorSchemeName;
 };
 
 const StatusStack = (props: StatusStackProps) => {
-  const { statusList } = props;
+  const { statusList, colorScheme } = props;
   const list = statusList;
   return (
     <Animated.View style={tailwind.style('py-1 pl-3')}>
       {list.map((value, index) => (
-        <StatusCell key={index} {...{ value, index }} />
+        <StatusCell key={index} {...{ value, index, colorScheme }} />
       ))}
     </Animated.View>
   );
 };
 
-export const StatusFilters = () => {
+export const StatusFilters = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   return (
     <BottomSheetView>
       <BottomSheetHeader headerText={i18n.t('CONVERSATION.FILTERS.STATUS.TITLE')} />
-      <StatusStack statusList={status} />
+      <StatusStack statusList={status} colorScheme={colorScheme} />
     </BottomSheetView>
   );
 };

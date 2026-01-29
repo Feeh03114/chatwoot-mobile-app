@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import React, { forwardRef, useCallback } from 'react';
-import { Dimensions, Platform, Pressable, StyleSheet } from 'react-native';
+import React, { forwardRef, useCallback, useEffect } from 'react';
+import { Dimensions, Platform, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Extrapolation,
@@ -95,7 +95,7 @@ export type SwipeableProps = {
   noOfPointers?: number;
   /**
    * Background color for the left swipeable element
-   * @default 'bg-blue-800'
+   * @default 'bg-brand-primary'
    */
   leftElementBgColor?: string;
   /**
@@ -122,7 +122,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
     spacing,
     triggerOverswipeOnFlick = false,
     noOfPointers = 1,
-    leftElementBgColor = 'bg-blue-800',
+    leftElementBgColor = 'bg-brand-primary',
     rightElementBgColor = 'bg-green-800',
   } = props;
 
@@ -133,7 +133,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
   const isGestureActive = useSharedValue(false);
 
   const maxTranslation = WIDTH * 0.6;
-  const tappedBgStyle = tailwind.color('bg-gray-200') as string;
+  const tappedBgStyle = tailwind.color('bg-gray-200 dark:bg-grayDark-200') as string;
   const maxSnapPointLeft = -maxTranslation;
   const maxSnapPointRight = maxTranslation;
 
@@ -424,9 +424,23 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
     };
   });
 
+
+  const scheme = useColorScheme();
+
+  const baseBg = useSharedValue('#fff');
+
+  useEffect(() => {
+    baseBg.value =
+      tailwind.color('bg-brand-background dark:bg-brand-background-dark') ?? '#fff';
+  }, [scheme]);
+
   const tappedCellStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: interpolateColor(isTapped.value, [0, 1], ['white', tappedBgStyle]),
+      backgroundColor: interpolateColor(
+        isTapped.value,
+        [0, 1],
+        [baseBg.value, tappedBgStyle] // tappedBgStyle PRECISA ser cor (#... / rgb), não class
+      ),
     };
   });
 
@@ -445,7 +459,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
   const cellGestures = Gesture.Race(panGesture, tapGesture, longPressGesture, flingGesture);
 
   return (
-    <AnimatedNativeView style={tailwind.style('flex flex-row')}>
+    <AnimatedNativeView style={tailwind.style('flex flex-row bg-brand-background dark:bg-brand-background-dark')}>
       <AnimatedPressable
         onPress={handleOnPressLeft}
         style={[

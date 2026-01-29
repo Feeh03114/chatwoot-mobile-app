@@ -98,13 +98,13 @@ const MFAScreen = () => {
   };
 
   return (
-    <SafeAreaView style={tailwind.style('flex-1 bg-white')}>
+    <SafeAreaView style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
         translucent
-        backgroundColor={tailwind.color('bg-white')}
+        backgroundColor={tailwind.color('bg-brand-background')}
         barStyle={'dark-content'}
       />
-      <View style={tailwind.style('flex-1 bg-white')}>
+      <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tailwind.style('px-6 pt-8')}
@@ -120,7 +120,7 @@ const MFAScreen = () => {
           <View style={tailwind.style('flex-row mt-8 mb-6 bg-gray-100 rounded-lg p-1')}>
             <Pressable
               style={tailwind.style(
-                `flex-1 py-3 px-4 rounded-md ${activeTab === 'authenticator' ? 'bg-white' : ''}`,
+                `flex-1 py-3 px-4 rounded-md ${activeTab === 'authenticator' ? 'bg-brand-background' : ''}`,
               )}
               onPress={() => {
                 setActiveTab('authenticator');
@@ -139,7 +139,7 @@ const MFAScreen = () => {
             </Pressable>
             <Pressable
               style={tailwind.style(
-                `flex-1 py-3 px-4 rounded-md ${activeTab === 'backup' ? 'bg-white' : ''}`,
+                `flex-1 py-3 px-4 rounded-md ${activeTab === 'backup' ? 'bg-brand-background' : ''}`,
               )}
               onPress={() => {
                 setActiveTab('backup');

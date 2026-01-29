@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, RefreshControl, StatusBar } from 'react-native';
+import { ActivityIndicator, AppState, RefreshControl, StatusBar, useColorScheme } from 'react-native';
 import Animated, {
   LinearTransition,
   runOnJS,
@@ -78,6 +78,7 @@ const ConversationList = () => {
   const { dismissAll } = useBottomSheetModal();
   const dispatch = useAppDispatch();
   const [appState, setAppState] = useState(AppState.currentState);
+  const colorScheme = useColorScheme();
 
   // This is used to prevent the infinite scrolling before the list is ready
   const [isFlashListReady, setFlashListReady] = useState(false);
@@ -128,14 +129,22 @@ const ConversationList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clearAndFetchConversations = useCallback(async (filters: FilterState) => {
-    setPageNumber(1);
-    await dispatch(clearAllConversations());
-    await dispatch(clearAllContacts());
-    await dispatch(clearAssignableAgents());
-    fetchConversations(filters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const clearAndFetchConversations = useCallback(
+    async (filters: FilterState) => {
+      setPageNumber(1);
+      await dispatch(clearAllConversations());
+      await dispatch(clearAllContacts());
+      await dispatch(clearAssignableAgents());
+      fetchConversations(filters);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [],
+  );
+
+  const activityIndicatorColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-primary-dark')
+      : tailwind.color('brand-primary');
 
   const ListFooterComponent = () => {
     if (isAllConversationsFetched) return null;
@@ -145,7 +154,9 @@ const ConversationList = () => {
           'flex-1 items-center justify-center pt-8',
           `pb-[${TAB_BAR_HEIGHT}px]`,
         )}>
-        {isAllConversationsFetched ? null : <ActivityIndicator size="small" />}
+        {isAllConversationsFetched ? null : (
+          <ActivityIndicator size="small" color={activityIndicatorColor} />
+        )}
       </Animated.View>
     );
   };
@@ -240,7 +251,7 @@ const ConversationList = () => {
   return shouldShowEmptyLoader ? (
     <Animated.View
       style={tailwind.style('flex-1 items-center justify-center', `pb-[${TAB_BAR_HEIGHT}px]`)}>
-      <ActivityIndicator />
+      <ActivityIndicator color={activityIndicatorColor} />
     </Animated.View>
   ) : allConversations.length === 0 ? (
     <Animated.ScrollView
@@ -250,7 +261,10 @@ const ConversationList = () => {
         `pb-[${TAB_BAR_HEIGHT}px]`,
       )}>
       <EmptyStateIcon />
-      <Animated.Text style={tailwind.style('pt-6 text-md  tracking-[0.32px] text-gray-800')}>
+      <Animated.Text
+        style={tailwind.style(
+          'pt-6 text-md  tracking-[0.32px] text-gray-800 dark:text-grayDark-800',
+        )}>
         {i18n.t('CONVERSATION.EMPTY')}
       </Animated.Text>
     </Animated.ScrollView>
@@ -276,12 +290,7 @@ const ConversationList = () => {
 const ConversationScreen = () => {
   const currentBottomSheet = useAppSelector(selectBottomSheetState);
   const dispatch = useAppDispatch();
-
-  const animationConfigs = useBottomSheetSpringConfigs({
-    mass: 1.2,
-    stiffness: 300,
-    damping: 50,
-  });
+  const colorScheme = useColorScheme();
 
   const { filtersModalSheetRef } = useRefsContext();
 
@@ -310,11 +319,13 @@ const ConversationScreen = () => {
   }, [currentBottomSheet]);
 
   return (
-    <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
+    <SafeAreaView
+      edges={['top']}
+      style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
-        translucent
-        backgroundColor={tailwind.color('bg-white')}
-        barStyle={'dark-content'}
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
       />
       <ConversationListStateProvider>
         <ConversationHeader />
@@ -323,16 +334,15 @@ const ConversationScreen = () => {
           ref={filtersModalSheetRef}
           backdropComponent={BottomSheetBackdrop}
           handleIndicatorStyle={tailwind.style(
-            'overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]',
+            'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
           )}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('rounded-[26px] overflow-hidden')}
-          animationConfigs={animationConfigs}
           enablePanDownToClose
           snapPoints={filterSnapPoints}
           onDismiss={handleOnDismiss}>
           <BottomSheetWrapper>
-            {currentBottomSheet === 'status' ? <StatusFilters /> : null}
+            {currentBottomSheet === 'status' ? <StatusFilters colorScheme={colorScheme} /> : null}
             {currentBottomSheet === 'sort_by' ? <SortByFilters /> : null}
             {currentBottomSheet === 'assignee_type' ? <AssigneeTypeFilters /> : null}
             {currentBottomSheet === 'inbox_id' ? <InboxFilters /> : null}

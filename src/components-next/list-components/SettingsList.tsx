@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Platform } from 'react-native';
+import { Pressable, StyleSheet, Platform, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { CaretRight } from '@/svg-icons';
@@ -20,6 +20,12 @@ type ListItemProps = {
 
 const ListItem = (props: ListItemProps) => {
   const { listItem, index, isLastItem } = props;
+  const colorScheme = useColorScheme();
+
+  const caretColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-700')
+      : tailwind.color('text-gray-700');
 
   return (
     <Pressable
@@ -27,7 +33,7 @@ const ListItem = (props: ListItemProps) => {
       key={index}
       style={({ pressed }) => [
         tailwind.style(
-          pressed ? 'bg-gray-100' : '',
+          pressed ? 'bg-gray-100 dark:bg-grayDark-100' : '',
           index === 0 ? 'rounded-t-[13px]' : '',
           isLastItem ? 'rounded-b-[13px]' : '',
         ),
@@ -42,12 +48,12 @@ const ListItem = (props: ListItemProps) => {
           style={tailwind.style(
             'flex-1 flex-row items-center justify-between py-[11px]',
             listItem.icon ? 'ml-3' : '',
-            !isLastItem ? 'border-b-[1px] border-b-blackA-A3' : '',
+            !isLastItem ? 'border-b-[1px] border-b-blackA-A3 dark:border-b-whiteA-A3' : '',
           )}>
           <Animated.View>
             <Animated.Text
               style={tailwind.style(
-                'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950',
+                'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950 dark:text-grayDark-950',
               )}>
               {listItem.title}
             </Animated.Text>
@@ -56,11 +62,13 @@ const ListItem = (props: ListItemProps) => {
             <Animated.Text
               style={tailwind.style(
                 'text-base font-inter-normal-20 leading-[22px] tracking-[0.16px]',
-                listItem.subtitleType === 'light' ? 'text-gray-900' : 'text-gray-950',
+                listItem.subtitleType === 'light'
+                  ? 'text-gray-900 dark:text-grayDark-900'
+                  : 'text-gray-950 dark:text-grayDark-950',
               )}>
               {listItem.subtitle}
             </Animated.Text>
-            {listItem.hasChevron ? <Icon icon={<CaretRight />} size={20} /> : null}
+            {listItem.hasChevron ? <Icon icon={<CaretRight stroke={caretColor} />} size={20} /> : null}
           </Animated.View>
         </Animated.View>
       </Animated.View>
@@ -70,6 +78,7 @@ const ListItem = (props: ListItemProps) => {
 
 export const SettingsList = (props: GenericListProps) => {
   const { list, sectionTitle } = props;
+  const colorScheme = useColorScheme();
 
   return (
     <Animated.View>
@@ -77,13 +86,17 @@ export const SettingsList = (props: GenericListProps) => {
         <Animated.View style={tailwind.style('pl-4 pb-3')}>
           <Animated.Text
             style={tailwind.style(
-              'text-sm font-inter-medium-24 leading-[16px] tracking-[0.32px] text-gray-700',
+              'text-sm font-inter-medium-24 leading-[16px] tracking-[0.32px] text-gray-700 dark:text-grayDark-700',
             )}>
             {sectionTitle}
           </Animated.Text>
         </Animated.View>
       ) : null}
-      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-white'), styles.listShadow]}>
+      <Animated.View
+        style={[
+          tailwind.style('rounded-[13px] mx-4 bg-brand-background dark:bg-brand-background-dark'),
+          styles.listShadow(colorScheme),
+        ]}>
         {list.map(
           (listItem, index) =>
             !listItem.disabled && (
@@ -99,7 +112,7 @@ export const SettingsList = (props: GenericListProps) => {
   );
 };
 const styles = StyleSheet.create({
-  listShadow:
+  listShadow: (colorScheme: 'light' | 'dark' | null | undefined) =>
     Platform.select({
       ios: {
         shadowColor: '#00000040',
@@ -110,7 +123,10 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 4,
-        backgroundColor: 'white',
+        backgroundColor:
+          colorScheme === 'dark'
+            ? tailwind.color('brand-background-dark')
+            : tailwind.color('brand-background'),
       },
     }) || {}, // Add fallback empty object
 });

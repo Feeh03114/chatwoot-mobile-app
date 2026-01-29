@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useCallback } from 'react';
+import { useColorScheme } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 
@@ -26,26 +27,43 @@ type InboxItemContainerProps = {
 };
 
 const UnreadComponent = React.memo(() => {
+  const colorScheme = useColorScheme();
+  const iconFillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-foreground-dark')
+      : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsRead />} size={24} />
+      <Icon icon={<MarkAsRead fillColor={iconFillColor} />} size={24} />
     </Animated.View>
   );
 });
 
 const ReadComponent = React.memo(() => {
+  const colorScheme = useColorScheme();
+  const iconFillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-foreground-dark')
+      : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsUnRead />} size={24} />
+      <Icon icon={<MarkAsUnRead fillColor={iconFillColor} />} size={24} />
     </Animated.View>
   );
 });
 
 const DeleteComponent = React.memo(() => {
+  const colorScheme = useColorScheme();
+  const iconFillColor =
+    colorScheme === 'dark' ? tailwind.color('gray-950') : tailwind.color('white');
+
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<DeleteIcon />} size={24} />
-      <Animated.Text style={tailwind.style('text-sm font-inter-420-20 pt-[3px] text-white')}>
+      <Icon icon={<DeleteIcon fill={iconFillColor} />} size={24} />
+      <Animated.Text
+        style={tailwind.style(
+          'text-sm font-inter-420-20 pt-[3px] text-white dark:text-gray-950',
+        )}>
         {i18n.t('NOTIFICATION.DELETE')}
       </Animated.Text>
     </Animated.View>
@@ -137,7 +155,7 @@ export const InboxItemContainerComponent = (props: InboxItemContainerProps) => {
       handleOnRightOverswiped={onSwipeRightAction}
       handlePress={onPressAction}
       triggerOverswipeOnFlick
-      rightElementBgColor="bg-ruby-800"
+      rightElementBgColor="bg-ruby-800 dark:bg-rubyDark-800"
       {...{ index, openedRowIndex }}>
       <InboxItem
         isRead={isRead}

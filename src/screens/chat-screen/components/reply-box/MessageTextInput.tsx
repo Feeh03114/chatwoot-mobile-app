@@ -191,7 +191,7 @@ export const MessageTextInput = ({
         <Animated.View
           style={[
             tailwind.style(
-              'bg-white border-t border-gray-200 rounded-[13px] mx-4 px-2 w-full max-h-[250px]',
+              'bg-brand-background border-t border-gray-200 rounded-[13px] mx-4 px-2 w-full max-h-[250px]',
               Platform.OS === 'ios' ? 'absolute bottom-full' : 'relative h-[150px]',
             ),
             styles.listShadow,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 4,
-        backgroundColor: 'white',
+        backgroundColor: tailwind.color('brand-background'),
       },
     }) || {}, // Add fallback empty object
 });

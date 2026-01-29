@@ -1,4 +1,5 @@
 import i18n from 'i18n-js';
+import * as Localization from 'expo-localization';
 
 import af from './af.json';
 import ar from './ar.json';
@@ -33,8 +34,6 @@ import uk from './uk.json';
 import vi from './vi.json';
 import zh from './zh.json';
 
-i18n.locale = 'en';
-i18n.fallbacks = true;
 i18n.translations = {
   af,
   ar,
@@ -70,4 +69,24 @@ i18n.translations = {
   zh,
 };
 
+export const getBestLocale = () => {
+  const deviceLocales = Localization.getLocales();
+  for (const locale of deviceLocales) {
+    // Try full language tag (e.g., "en-US", "pt-BR")
+    if (i18n.translations[locale.languageTag]) {
+      return locale.languageTag;
+    }
+    // Try language code (e.g., "en", "pt")
+    if (i18n.translations[locale.languageCode]) {
+      return locale.languageCode;
+    }
+  }
+  return 'en'; // Fallback to English
+};
+
+i18n.locale = getBestLocale();
+i18n.fallbacks = true;
+
 export default i18n;
+
+

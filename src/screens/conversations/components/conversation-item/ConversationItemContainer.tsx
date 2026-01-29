@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { memo, useCallback, useMemo } from 'react';
+import { useColorScheme } from 'react-native';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import Animated, { SharedValue } from 'react-native-reanimated';
 
@@ -35,18 +36,30 @@ type ConversationItemContainerProps = {
   openedRowIndex: SharedValue<number | null>;
 };
 
+// Modificar ReadComponent
 const ReadComponent = React.memo(() => {
+  const colorScheme = useColorScheme();
+  const fillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-foreground-dark')
+      : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsRead />} size={24} />
+      <Icon icon={<MarkAsRead fill={fillColor} />} size={24} />
     </Animated.View>
   );
 });
 
+// Modificar UnreadComponent
 const UnreadComponent = React.memo(() => {
+  const colorScheme = useColorScheme();
+  const fillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-foreground-dark')
+      : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsUnRead />} size={24} />
+      <Icon icon={<MarkAsUnRead fill={fillColor} />} size={24} />
     </Animated.View>
   );
 });
@@ -55,7 +68,10 @@ const StatusComponent = React.memo(() => {
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center ')}>
       <Icon icon={<StatusIcon />} size={24} />
-      <Animated.Text style={tailwind.style('text-sm font-inter-420-20 pt-[3px] text-white')}>
+      <Animated.Text
+        style={tailwind.style(
+          'text-sm font-inter-420-20 pt-[3px] text-brand-foreground dark:text-brand-foreground-dark',
+        )}>
         {i18n.t('CONVERSATION.ITEM.STATUS')}
       </Animated.Text>
     </Animated.View>
@@ -63,7 +79,7 @@ const StatusComponent = React.memo(() => {
 });
 
 export const ConversationItemContainer = memo((props: ConversationItemContainerProps) => {
-  const { conversationItem, index, openedRowIndex } = props;
+  const { conversationItem, index, openedRowIndex } = props; // Remover colorScheme
   const {
     meta: {
       sender: { name: senderName, thumbnail: senderThumbnail, id: contactId },
@@ -156,21 +172,22 @@ export const ConversationItemContainer = memo((props: ConversationItemContainerP
     appliedSla: appliedSla || null,
     appliedSlaConversationDetails: {
       firstReplyCreatedAt,
-      waitingSince,
-      status,
+      waitingSince: waitingSince,
+      status: status,
     },
     additionalAttributes,
     allLabels,
     typingText: typingText as string | undefined,
+    // colorScheme, // REMOVER
   };
 
   return (
     <Swipeable
       spacing={27}
-      leftElement={unreadCount > 0 ? <ReadComponent /> : <UnreadComponent />}
+      leftElement={unreadCount > 0 ? <ReadComponent /> : <UnreadComponent />} // Remover passagem de colorScheme
       rightElement={<StatusComponent />}
       handleLeftElementPress={markMessageReadOrUnread}
-      handleOnLeftOverswiped={markMessageReadOrUnread}
+      handleOnLeftOverswiped={markMessageReadOrunRead}
       handleRightElementPress={onStatusAction}
       handleOnRightOverswiped={onStatusAction}
       handleLongPress={onLongPressAction}

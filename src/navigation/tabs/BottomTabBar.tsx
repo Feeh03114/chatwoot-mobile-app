@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Platform, Pressable } from 'react-native';
+import { Platform, Pressable, useColorScheme } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -36,20 +36,36 @@ type TabBarIconsProps = {
 };
 
 const TabBarIcons = ({ focused, route }: TabBarIconsProps) => {
+  const colorScheme = useColorScheme();
+  const focusedColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-primary-dark')
+      : tailwind.color('brand-primary');
+  const unfocusedColor =
+    colorScheme === 'dark'
+      ? tailwind.color('grayDark-900')
+      : tailwind.color('gray-900');
+  const color = focused ? focusedColor : unfocusedColor;
+
   switch (route.name) {
     case 'Conversations':
-      return focused ? <ConversationIconFilled /> : <ConversationIconOutline />;
+      return focused ? (
+        <ConversationIconFilled color={color} />
+      ) : (
+        <ConversationIconOutline color={color} />
+      );
     case 'Inbox':
-      return focused ? <InboxIconFilled /> : <InboxIconOutline />;
+      return focused ? <InboxIconFilled color={color} /> : <InboxIconOutline color={color} />;
     case 'Settings':
-      return focused ? <SettingsIconFilled /> : <SettingsIconOutline />;
+      return focused ? <SettingsIconFilled color={color} /> : <SettingsIconOutline color={color} />;
   }
 };
 
 type TabBarBackgroundProps = BlurViewProps & PropsWithChildren;
 
 const TabBarBackground = (props: TabBarBackgroundProps) => {
-  const { children, style, blurAmount, blurType } = props;
+  const { children, style, blurAmount } = props;
+  const colorScheme = useColorScheme();
 
   const currentState = useAppSelector(selectCurrentState);
 
@@ -70,6 +86,8 @@ const TabBarBackground = (props: TabBarBackgroundProps) => {
       ],
     };
   });
+
+  const blurType = colorScheme === 'dark' ? 'dark' : 'light';
 
   return Platform.OS === 'ios' ? (
     <AnimatedBlurView {...{ blurAmount, blurType }} style={[style, animatedTabBarStyle]}>
@@ -151,22 +169,21 @@ export const BottomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
   return (
     <TabBarBackground
       blurAmount={25}
-      blurType="light"
       style={Platform.select({
         ios: [
           tailwind.style(
-            'flex flex-row absolute w-full bottom-0 pl-[72px] pr-[71px] pt-[11px] pb-8 bg-[#00000009]',
+            'flex flex-row absolute w-full bottom-0 pl-[72px] pr-[71px] pt-[11px] pb-8 bg-blackA-A2 dark:bg-whiteA-A2',
             `h-[${tabBarHeight}px]`,
           ),
         ],
         android: [
           tailwind.style(
-            'flex flex-row absolute w-full bottom-0 pl-[72px] pr-[71px] py-[11px] bg-white',
+            'flex flex-row absolute w-full bottom-0 pl-[72px] pr-[71px] py-[11px] bg-brand-background dark:bg-brand-background-dark',
             `h-[${tabBarHeight}px]`,
           ),
         ],
       })}>
-      <Animated.View style={tailwind.style('absolute inset-0 h-[1px] bg-blackA-A3')} />
+      <Animated.View style={tailwind.style('absolute inset-0 h-[1px] bg-blackA-A3 dark:bg-whiteA-A3')} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;

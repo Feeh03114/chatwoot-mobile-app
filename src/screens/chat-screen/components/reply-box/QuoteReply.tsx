@@ -21,7 +21,7 @@ const AudioIcon = () => {
   return (
     <Animated.View style={tailwind.style('flex-1 justify-center items-center')}>
       <Icon
-        icon={<VoiceNote stroke={tailwind.color('text-blue-800')} strokeOpacity={1} />}
+        icon={<VoiceNote stroke={tailwind.color('text-brand-primary')} strokeOpacity={1} />}
         size={24}
       />
     </Animated.View>
@@ -30,7 +30,7 @@ const AudioIcon = () => {
 const File = () => {
   return (
     <Animated.View style={tailwind.style('flex-1  justify-center items-center')}>
-      <Icon icon={<FileIcon fill={tailwind.color('text-blue-800')} />} size={24} />
+      <Icon icon={<FileIcon fill={tailwind.color('text-brand-primary')} />} size={24} />
     </Animated.View>
   );
 };
@@ -104,7 +104,7 @@ export const QuoteReply = () => {
   return (
     <Pressable
       onPress={handleScrollToMessage}
-      style={tailwind.style('flex flex-row items-center px-2.5 pb-[14px] bg-white -z-10')}>
+      style={tailwind.style('flex flex-row items-center px-2.5 pb-[14px] bg-brand-background -z-10')}>
       {quoteMessage?.attachments?.length && quoteMessage?.attachments?.length > 0 ? (
         <Animated.View style={tailwind.style('h-9.5 w-9.5 mr-3 rounded-lg overflow-hidden')}>
           {quoteMessage?.attachments?.length > 0 &&

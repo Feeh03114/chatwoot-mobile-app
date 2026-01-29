@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StatusBar, Text, Platform, Pressable } from 'react-native';
+import { StatusBar, Text, Platform, Pressable, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 // import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -76,6 +76,7 @@ const appVersionDetails = buildNumber ? `${appVersion} (${buildNumber})` : appVe
 const SettingsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
   const availabilityStatus =
     (useSelector(selectCurrentUserAvailability) as AvailabilityStatus) || 'offline';
 
@@ -271,11 +272,14 @@ const SettingsScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={tailwind.style('flex-1 bg-white font-inter-normal-20')}>
+    <SafeAreaView
+      style={tailwind.style(
+        'flex-1 bg-brand-background dark:bg-brand-background-dark font-inter-normal-20',
+      )}>
       <StatusBar
-        translucent
-        backgroundColor={tailwind.color('bg-white')}
-        barStyle={'dark-content'}
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
       />
       <SettingsHeader />
       <Animated.ScrollView
@@ -286,16 +290,19 @@ const SettingsScreen = () => {
             <UserAvatar src={avatarUrl} name={name} status={availabilityStatus} />
             <Animated.View
               style={tailwind.style(
-                'absolute border-[2px] border-white rounded-full -bottom-[2px] right-[10px]',
+                'absolute border-[2px] border-white dark:border-grayDark-100 rounded-full -bottom-[2px] right-[10px]',
               )}></Animated.View>
           </Animated.View>
           <Animated.View style={tailwind.style('flex flex-col items-center gap-1')}>
-            <Animated.Text style={tailwind.style('text-[22px] font-inter-580-24 text-gray-950')}>
+            <Animated.Text
+              style={tailwind.style(
+                'text-[22px] font-inter-580-24 text-gray-950 dark:text-grayDark-950',
+              )}>
               {name}
             </Animated.Text>
             <Animated.Text
               style={tailwind.style(
-                'text-[15px] font-inter-420-20 leading-[17.25px] text-gray-900',
+                'text-[15px] font-inter-420-20 leading-[17.25px] text-gray-900 dark:text-grayDark-900',
               )}>
               {email}
             </Animated.Text>
@@ -318,7 +325,7 @@ const SettingsScreen = () => {
         <Pressable
           style={tailwind.style('p-4 items-center')}
           onLongPress={() => debugActionsSheetRef.current?.present()}>
-          <Text style={tailwind.style('text-sm text-gray-700 ')}>
+          <Text style={tailwind.style('text-sm text-gray-700 dark:text-grayDark-700')}>
             {`${chatwootInstance} ${appVersionDetails}`}
           </Text>
         </Pressable>
@@ -326,7 +333,9 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={userAvailabilityStatusSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         // TODO: Fix this later
@@ -345,7 +354,9 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={languagesModalSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         // TODO: Fix this later
         // bottomInset={bottom === 0 ? 12 : bottom}
         enablePanDownToClose
@@ -361,7 +372,9 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={notificationPreferencesSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         // TODO: Fix this later
         // bottomInset={bottom === 0 ? 12 : bottom}
         enablePanDownToClose
@@ -377,7 +390,9 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={switchAccountSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         // TODO: Fix this later
         // bottomInset={bottom === 0 ? 12 : bottom}
         enablePanDownToClose
@@ -397,7 +412,9 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={debugActionsSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
+        handleIndicatorStyle={tailwind.style(
+          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
+        )}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

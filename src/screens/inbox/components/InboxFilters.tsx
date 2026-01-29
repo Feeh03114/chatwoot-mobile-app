@@ -11,6 +11,7 @@ import i18n from '@/i18n';
 import { InboxSortTypes, InboxSortOptions } from '@/store/notification/notificationTypes';
 import { selectSortOrder, setFilters } from '@/store/notification/notificationFilterSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type SortByCellProps = {
   value: string;
@@ -25,6 +26,7 @@ const SortByCell = (props: SortByCellProps) => {
   const { value, index, sortOrder, onChange } = props;
 
   const hapticSelection = useHaptic();
+  const { getThemedColor } = useThemeColors();
 
   const handlePreferredSortPress = () => {
     hapticSelection?.();
@@ -46,7 +48,7 @@ const SortByCell = (props: SortByCellProps) => {
           )}>
           {i18n.t(`NOTIFICATION.FILTERS.SORT_BY.OPTIONS.${value.toUpperCase()}`)}
         </Animated.Text>
-        {sortOrder === value ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {sortOrder === value ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

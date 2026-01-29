@@ -60,7 +60,7 @@ export const SearchBar = (props: SearchBarProps) => {
       style={[
         tailwind.style(
           'px-3 h-[36px] relative flex-row items-center',
-          isActive ? 'flex-1 bg-white rounded-[11px]' : ''
+          isActive ? 'flex-1 bg-brand-background rounded-[11px]' : ''
         ),
         wrapperStyle,
       ]}>
@@ -83,7 +83,7 @@ export const SearchBar = (props: SearchBarProps) => {
         style={[
           tailwind.style(
             'flex-1 h-9 px-8.5 py-[7px] text-black text-base font-inter-normal-20 leading-[19.5px] rounded-[11px]',
-            isActive ? 'bg-white' : 'bg-blackA-A3',
+            isActive ? 'bg-brand-background' : 'bg-blackA-A3',
             isLoading ? 'pr-8.5' : 'pr-4',
             leftIcon ? 'pl-8.5' : 'pl-4'
           ),

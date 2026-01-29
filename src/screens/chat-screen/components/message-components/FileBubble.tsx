@@ -28,10 +28,11 @@ const generateUniqueFileName = (url: string, originalFileName: string) => {
 type FilePreviewProps = Pick<FileBubbleProps, 'fileSrc'> & {
   isComposed?: boolean;
   variant: string;
+  isIncoming?: boolean;
 };
 
 export const FileBubblePreview = (props: FilePreviewProps) => {
-  const { fileSrc, isComposed = false, variant } = props;
+  const { fileSrc, isComposed = false, variant, isIncoming } = props;
   const dirs = RNFetchBlob.fs.dirs;
 
   const [fileDownload, setFileDownload] = useState(false);
@@ -78,11 +79,7 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
         <Animated.View style={tailwind.style('pr-1.5')}>
           <Spinner
             size={20}
-            stroke={
-              variant === MESSAGE_VARIANTS.USER
-                ? tailwind.color('text-white')
-                : tailwind.color('bg-blue-800')
-            }
+stroke={isIncoming ? tailwind.color('text-white') : tailwind.color('bg-brand-primary')}
           />
         </Animated.View>
       ) : (
@@ -91,11 +88,7 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
             size={24}
             icon={
               <FileIcon
-                fill={
-                  variant === MESSAGE_VARIANTS.USER
-                    ? tailwind.color('bg-white')
-                    : tailwind.color('text-blue-800')
-                }
+fill={isIncoming ? tailwind.color('bg-white') : tailwind.color('text-brand-primary')}
               />
             }
           />
@@ -127,7 +120,7 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
               tailwind.style(
                 'border-b-[1px] absolute left-0 right-0 ios:bottom-[1px] android:bottom-0',
                 variant === MESSAGE_VARIANTS.USER ? 'border-white' : '',
-                variant === MESSAGE_VARIANTS.AGENT ? 'border-blue-800' : '',
+                variant === MESSAGE_VARIANTS.AGENT ? 'border-brand-primary' : '',
               ),
             ]}
           />

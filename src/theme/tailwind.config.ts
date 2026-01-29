@@ -16,6 +16,25 @@ const chatwootAppColors = {
   ...whiteA,
   ...radixUILightColors,
   ...radixUIDarkColors,
+  // Novas cores da marca
+  brand: {
+    primary: {
+      DEFAULT: '#00C0A4',
+      dark: '#00A38B'
+    },
+    secondary: {
+      DEFAULT: '#00F2D0',
+      dark: '#00CCB3'
+    },
+    background: {
+      DEFAULT: 'hsl(0, 0%, 100%)', // Light mode background
+      dark: 'hsl(0, 0%, 10.5%)' // Dark mode background
+    },
+    foreground: {
+      DEFAULT: 'hsl(0, 0%, 0%)', // Light mode foreground
+      dark: 'hsl(0, 0%, 100%)' // Dark mode foreground
+    }
+  }
 };
 
 export const twConfig = {

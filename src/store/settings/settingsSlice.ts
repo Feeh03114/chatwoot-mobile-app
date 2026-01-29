@@ -20,8 +20,8 @@ interface SettingsState {
   pushToken: string;
 }
 const initialState: SettingsState = {
-  baseUrl: 'app.chatwoot.com',
-  installationUrl: 'https://app.chatwoot.com/',
+  baseUrl: 'chat.waxp.com.br',
+  installationUrl: 'https://chat.waxp.com.br/',
   uiFlags: {
     isSettingUrl: false,
     isUpdating: false,
@@ -37,7 +37,7 @@ const initialState: SettingsState = {
     selected_push_flags: [],
     user_id: 0,
   },
-  webSocketUrl: 'wss://app.chatwoot.com/cable',
+  webSocketUrl: 'wss://chat.waxp.com.br/cable',
   theme: 'system',
   version: '',
   pushToken: '',
@@ -53,6 +53,9 @@ export const settingsSlice = createSlice({
     setLocale: (state, action) => {
       state.localeValue = action.payload;
       state.uiFlags.isLocaleSet = true;
+    },
+    setTheme: (state, action) => {
+      state.theme = action.payload;
     },
   },
   extraReducers: builder => {

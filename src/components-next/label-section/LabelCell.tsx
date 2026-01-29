@@ -5,6 +5,7 @@ import { tailwind } from '@/theme';
 import { Label } from '@/types/common/Label';
 import { TickIcon } from '@/svg-icons';
 import { Icon } from '@/components-next/common/icon';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type LabelCellProps = {
   value: Label;
@@ -16,6 +17,7 @@ type LabelCellProps = {
 
 export const LabelCell = (props: LabelCellProps) => {
   const { value, isLastItem, handleLabelPress, isActive = false } = props;
+  const { getThemedColor } = useThemeColors();
 
   const handleOnPress = () => {
     handleLabelPress(value.title);
@@ -37,7 +39,7 @@ export const LabelCell = (props: LabelCellProps) => {
           ]}>
           {value.title}
         </Animated.Text>
-        {isActive ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {isActive ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

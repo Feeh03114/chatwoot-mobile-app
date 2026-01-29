@@ -33,6 +33,7 @@ const AnimatedFlashlist = Animated.createAnimatedComponent(FlashList<Notificatio
 
 const InboxList = () => {
   const [pageNumber, setPageNumber] = useState(1);
+  const colorScheme = useColorScheme();
 
   const [isFlashListReady, setFlashListReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -50,12 +51,18 @@ const InboxList = () => {
   // This useEffect is used to re-fetch the notifications whenever the filters change.
   // The previousFilters ref is used to prevent an infinite loop.
   useEffect(() => {
-    if (previousFilters.current !== filters) { // Comparar filters
+    if (previousFilters.current !== filters) {
+      // Comparar filters
       previousFilters.current = filters;
       clearAndFetchNotifications(filters); // Passar filters
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]); // Depender de filters
+
+  const activityIndicatorColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-primary-dark')
+      : tailwind.color('brand-primary');
 
   // eslint-disable-next-line react/display-name
   const ListFooterComponent = React.memo(() => {
@@ -66,7 +73,9 @@ const InboxList = () => {
           'flex-1 items-center justify-center pt-8',
           `pb-[${TAB_BAR_HEIGHT}px]`,
         )}>
-        {isAllNotificationsFetched ? null : <ActivityIndicator size="small" />}
+        {isAllNotificationsFetched ? null : (
+          <ActivityIndicator size="small" color={activityIndicatorColor} />
+        )}
       </Animated.View>
     );
   });
@@ -76,15 +85,20 @@ const InboxList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clearAndFetchNotifications = useCallback(async (filters: FilterState) => { // Tipagem para filters
-    setPageNumber(1);
-    await dispatch(resetNotifications());
-    fetchNotifications(filters); // Passar filters
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const clearAndFetchNotifications = useCallback(
+    async (filters: FilterState) => {
+      // Tipagem para filters
+      setPageNumber(1);
+      await dispatch(resetNotifications());
+      fetchNotifications(filters); // Passar filters
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [],
+  );
 
   const fetchNotifications = useCallback(
-    async (filters: FilterState, page: number = 1) => { // Tipagem para filters
+    async (filters: FilterState, page: number = 1) => {
+      // Tipagem para filters
       dispatch(notificationActions.fetchNotifications({ page, sort_order: filters.sortOrder })); // Usar filters.sortOrder
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -108,7 +122,8 @@ const InboxList = () => {
   const handleRefresh = useCallback(() => {
     setFlashListReady(false);
     setIsRefreshing(true);
-    clearAndFetchNotifications(filters).finally(() => { // Passar filters
+    clearAndFetchNotifications(filters).finally(() => {
+      // Passar filters
       setIsRefreshing(false);
     });
   }, [clearAndFetchNotifications, filters]); // Depender de filters
@@ -139,7 +154,7 @@ const InboxList = () => {
   return shouldShowEmptyLoader ? (
     <Animated.View
       style={tailwind.style('flex-1 items-center justify-center', `pb-[${TAB_BAR_HEIGHT}px]`)}>
-      <ActivityIndicator />
+      <ActivityIndicator color={activityIndicatorColor} />
     </Animated.View>
   ) : notifications.length === 0 ? (
     <Animated.ScrollView
@@ -149,7 +164,10 @@ const InboxList = () => {
         `pb-[${TAB_BAR_HEIGHT}px]`,
       )}>
       <EmptyStateIcon />
-      <Animated.Text style={tailwind.style('pt-6 text-md tracking-[0.32px] text-gray-800')}>
+      <Animated.Text
+        style={tailwind.style(
+          'pt-6 text-md tracking-[0.32px] text-gray-800 dark:text-grayDark-800',
+        )}>
         {i18n.t('NOTIFICATION.EMPTY')}
       </Animated.Text>
     </Animated.ScrollView>
@@ -170,8 +188,11 @@ const InboxList = () => {
   );
 };
 
+import { useColorScheme } from 'react-native';
+
 const InboxScreen = () => {
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
 
   // Memoize the markAllAsRead callback
   const markAllAsRead = useCallback(async () => {
@@ -182,11 +203,13 @@ const InboxScreen = () => {
   }, [dispatch]);
 
   return (
-    <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
+    <SafeAreaView
+      edges={['top']}
+      style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
-        translucent
-        backgroundColor={tailwind.color('bg-white')}
-        barStyle={'dark-content'}
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor="transparent"
+        translucent={true}
       />
       <InboxListStateProvider>
         <InboxHeader markAllAsRead={markAllAsRead} />

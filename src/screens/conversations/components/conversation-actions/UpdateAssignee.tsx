@@ -24,6 +24,7 @@ import i18n from '@/i18n';
 import { CONVERSATION_EVENTS } from '@/constants/analyticsEvents';
 import AnalyticsHelper from '@/utils/analyticsUtils';
 import { selectUserId } from '@/store/auth/authSelectors';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type AssigneeCellProps = {
   agent: Agent;
@@ -34,6 +35,7 @@ type AssigneeCellProps = {
 
 const AssigneeCell = (props: AssigneeCellProps) => {
   const { agent, lastItem, assigneeId } = props;
+  const { getThemedColor } = useThemeColors();
 
   return (
     <Pressable onPress={props.onPress} style={tailwind.style('flex flex-row items-center')}>
@@ -51,7 +53,7 @@ const AssigneeCell = (props: AssigneeCellProps) => {
           ]}>
           {agent.name}
         </Animated.Text>
-        {assigneeId === agent.id ? <Icon icon={<TickIcon />} size={20} /> : null}
+        {assigneeId === agent.id ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );
@@ -154,7 +156,7 @@ export const UpdateAssignee = () => {
                   <Animated.Text
                     style={[
                       tailwind.style(
-                        'text-base text-blue-800 font-inter-420-20 leading-[21px] tracking-[0.16px]',
+                        'text-base text-brand-primary font-inter-420-20 leading-[21px] tracking-[0.16px]',
                       ),
                     ]}>
                     {i18n.t('CONVERSATION.SELF_ASSIGN')}

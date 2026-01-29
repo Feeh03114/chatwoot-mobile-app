@@ -3,6 +3,7 @@ import Animated from 'react-native-reanimated';
 
 import { tailwind } from '@/theme';
 import { unixTimestampToReadableTime } from '@/utils/dateTimeUtils';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type ActivityTextCellProps = {
   text: string;
@@ -11,11 +12,16 @@ type ActivityTextCellProps = {
 
 export const ActivityTextCell = (props: ActivityTextCellProps) => {
   const { text, timeStamp } = props;
+  const { getThemedColor } = useThemeColors();
+
+  const textColor = getThemedColor('text-blackA-A11', 'text-whiteA-A11');
+
   return (
     <Animated.View style={tailwind.style('flex flex-row flex-wrap justify-center py-1 px-10')}>
       <Animated.Text
         style={tailwind.style(
-          'text-cxs font-inter-420-20 tracking-[0.32px] leading-[18px] text-blackA-A11 text-center',
+          'text-cxs font-inter-420-20 tracking-[0.32px] leading-[18px] text-center',
+          textColor,
         )}>
         {text} {unixTimestampToReadableTime(timeStamp)}
       </Animated.Text>

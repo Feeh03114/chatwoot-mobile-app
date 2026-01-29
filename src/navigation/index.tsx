@@ -27,6 +27,7 @@ import Inter42020 from '@/assets/fonts/Inter-420-20.ttf';
 import Inter50024 from '@/assets/fonts/Inter-500-24.ttf';
 import Inter58024 from '@/assets/fonts/Inter-580-24.ttf';
 import Inter60020 from '@/assets/fonts/Inter-600-20.ttf';
+import { tailwind } from '@/theme/tailwind';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
@@ -198,7 +199,7 @@ export const AppNavigationContainer = () => {
       }}
       fallback={<ActivityIndicator animating />}>
       <BottomSheetModalProvider>
-        <View style={styles.navigationLayout} onLayout={onLayoutRootView}>
+        <View style={tailwind.style('flex-1 bg-brand-backgrounddark:bg-brand-background-dark')} onLayout={onLayoutRootView}>
           <AppTabs />
         </View>
       </BottomSheetModalProvider>
