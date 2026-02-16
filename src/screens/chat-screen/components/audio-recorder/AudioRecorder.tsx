@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, PermissionsAndroid, Platform, Pressable, useColorScheme } from 'react-native';
 import AudioRecorderPlayer, {
   RecordBackType,
@@ -23,6 +23,7 @@ import {
 } from '@/store/conversation/localRecordedAudioCacheSlice';
 // eslint-disable-next-line import/no-unresolved
 import { convertAacToWav } from '@/utils/audioConverter';
+import { AudioWaveform, normalizeMetering } from './AudioWaveform';
 
 const RecorderSegmentWidth = Dimensions.get('screen').width - 8 - 80 - 12;
 
@@ -78,6 +79,8 @@ export const AudioRecorder = ({
   const [isAudioRecording, setIsAudioRecording] = useState(false);
 
   const [recorderData, setRecorderData] = useState<RecordBackType | undefined>(undefined);
+  const [amplitudes, setAmplitudes] = useState<number[]>([]);
+  const amplitudesRef = useRef<number[]>([]);
 
   useEffect(() => {
     const requestAndroidPermission = async () => {
@@ -99,6 +102,9 @@ export const AudioRecorder = ({
     const addRecorderListener = () => {
       ARPlayer.addRecordBackListener((recordingMeta: RecordBackType) => {
         setRecorderData(recordingMeta);
+        const normalized = normalizeMetering(recordingMeta.currentMetering);
+        amplitudesRef.current = [...amplitudesRef.current, normalized];
+        setAmplitudes(amplitudesRef.current);
       });
       const dirs = RNFetchBlob.fs.dirs;
       const path = Platform.select({
@@ -106,6 +112,7 @@ export const AudioRecorder = ({
         android: `${dirs.CacheDir}/audio-${localRecordedAudioCacheFilePaths.length}.aac`,
       });
 
+      ARPlayer.setSubscriptionDuration(0.1);
       ARPlayer.startRecorder(path, {
         AVFormatIDKeyIOS: AVEncodingOption.aac,
         AVNumberOfChannelsKeyIOS: 2,
@@ -116,7 +123,7 @@ export const AudioRecorder = ({
         AudioSamplingRateAndroid: 16000,
         AudioEncodingBitRateAndroid: 128000,
         AudioChannelsAndroid: 2,
-      })
+      }, true)
         .then((value: string) => {
           if (value) {
             setIsAudioRecording(true);
@@ -140,6 +147,8 @@ export const AudioRecorder = ({
 
   const deleteRecorder = async () => {
     await ARPlayer.stopRecorder();
+    amplitudesRef.current = [];
+    setAmplitudes([]);
     setIsVoiceRecorderOpen(false);
   };
 
@@ -249,7 +258,7 @@ export const AudioRecorder = ({
       </Pressable>
       <Animated.View
         style={tailwind.style(
-          'bg-brand-primary dark:bg-brand-primary-dark px-3 py-[7px] rounded-2xl min-h-9 flex flex-row items-center justify-between mx-1.5',
+          'bg-brand-primary dark:bg-brand-primary-dark px-3 py-[7px] rounded-2xl min-h-9 flex flex-row items-center mx-1.5',
           `w-[${RecorderSegmentWidth}px]`,
         )}>
         <Pressable onPress={toggleRecorder} hitSlop={12}>
@@ -263,9 +272,10 @@ export const AudioRecorder = ({
             </Animated.View>
           )}
         </Pressable>
+        <AudioWaveform amplitudes={amplitudes} />
         <Animated.Text
           style={tailwind.style(
-            'text-xs leading-[14px] font-inter-420-20 tracking-[0.32px] text-whiteA-A12 dark:text-grayDark-950',
+            'text-xs leading-[14px] font-inter-420-20 tracking-[0.32px] text-whiteA-A12 dark:text-grayDark-950 ml-2',
           )}>
           {millisecondsToTimeString(recorderData?.currentPosition)}
         </Animated.Text>
