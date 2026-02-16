@@ -23,8 +23,8 @@ const brandColors = {
 };
 
 const chatwootAppColors = {
-  ...blackA.blackA,
-  ...whiteA.whiteA,
+  blackA: blackA.blackA,
+  whiteA: whiteA.whiteA,
   ...radixUILightColors,
   ...radixUIDarkColors,
   ...brandColors,
