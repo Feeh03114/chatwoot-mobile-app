@@ -15,8 +15,14 @@ type ButtonProps = {
 
 const getButtonStyles = (isPrimary: boolean, pressed: boolean) => {
   const baseStyles = 'py-[11px] flex items-center justify-center rounded-[13px]';
-  const variantStyles = isPrimary ? 'bg-brand-primary' : 'bg-gray-50';
-  const pressedStyles = isPrimary ? 'opacity-95' : pressed ? 'bg-gray-100' : '';
+  const variantStyles = isPrimary
+    ? 'bg-brand-primary dark:bg-brand-primary-dark'
+    : 'bg-gray-50 dark:bg-grayDark-500';
+  const pressedStyles = isPrimary
+    ? 'opacity-95'
+    : pressed
+    ? 'bg-gray-100 dark:bg-grayDark-100'
+    : '';
 
   return tailwind.style(baseStyles, variantStyles, pressedStyles);
 };
@@ -25,11 +31,11 @@ const getTextStyles = (isPrimary: boolean, isDestructive: boolean) => {
   const baseStyles = 'text-base font-medium tracking-[0.16px] leading-[22px]';
   const colorStyles = isPrimary
     ? isDestructive
-      ? 'text-tomato-800'
-      : 'text-white'
+      ? 'text-tomato-800 dark:text-tomatoDark-800'
+      : 'text-white dark:text-grayDark-950'
     : isDestructive
-      ? 'text-ruby-800'
-      : 'text-gray-950';
+    ? 'text-ruby-800 dark:text-rubyDark-800'
+    : 'text-gray-950 dark:text-grayDark-950';
 
   return tailwind.style(baseStyles, colorStyles);
 };

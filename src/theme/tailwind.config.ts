@@ -11,30 +11,23 @@ const blackA = require('./colors/blackA');
 // White with alpha variations
 const whiteA = require('./colors/whiteA');
 
+const brandColors = {
+  'brand-primary': radixUILightColors.blue[700],
+  'brand-primary-dark': radixUIDarkColors.blueDark[800],
+  'brand-secondary': radixUILightColors.blue[100],
+  'brand-secondary-dark': radixUIDarkColors.blueDark[400],
+  'brand-background': radixUILightColors.gray[50],
+  'brand-background-dark': radixUIDarkColors.grayDark[50],
+  'brand-foreground': '#FFFFFF',
+  'brand-foreground-dark': radixUIDarkColors.grayDark[950],
+};
+
 const chatwootAppColors = {
-  ...blackA,
-  ...whiteA,
+  ...blackA.blackA,
+  ...whiteA.whiteA,
   ...radixUILightColors,
   ...radixUIDarkColors,
-  // Novas cores da marca
-  brand: {
-    primary: {
-      DEFAULT: '#00C0A4',
-      dark: '#00A38B'
-    },
-    secondary: {
-      DEFAULT: '#00F2D0',
-      dark: '#00CCB3'
-    },
-    background: {
-      DEFAULT: 'hsl(0, 0%, 100%)', // Light mode background
-      dark: 'hsl(0, 0%, 10.5%)' // Dark mode background
-    },
-    foreground: {
-      DEFAULT: 'hsl(0, 0%, 0%)', // Light mode foreground
-      dark: 'hsl(0, 0%, 100%)' // Dark mode foreground
-    }
-  }
+  ...brandColors,
 };
 
 export const twConfig = {

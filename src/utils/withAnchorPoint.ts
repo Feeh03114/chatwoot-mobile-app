@@ -10,6 +10,9 @@ export interface Size {
   height: number;
 }
 
+type ReadonlyTransformArray = NonNullable<Exclude<TransformsStyle['transform'], string>>;
+type TransformArray = Array<ReadonlyTransformArray[number]>;
+
 const isValidSize = (size: Size): boolean => {
   'worklet';
   return size && size.width > 0 && size.height > 0;
@@ -23,37 +26,31 @@ export const withAnchorPoint = (transform: TransformsStyle, anchorPoint: Point, 
     return transform;
   }
 
-  let injectedTransform = transform.transform;
-  if (!injectedTransform) {
+  if (!transform.transform || typeof transform.transform === 'string') {
     return transform;
   }
 
-  if (anchorPoint.x !== defaultAnchorPoint.x && size.width) {
-    const shiftTranslateX = [];
+  let injectedTransform: TransformArray = [...transform.transform];
 
-    // shift before rotation
-    shiftTranslateX.push({
-      translateX: size.width * (anchorPoint.x - defaultAnchorPoint.x),
-    });
+  if (anchorPoint.x !== defaultAnchorPoint.x && size.width) {
+    const shiftTranslateX: TransformArray = [
+      {
+        translateX: size.width * (anchorPoint.x - defaultAnchorPoint.x),
+      },
+    ];
     injectedTransform = [...shiftTranslateX, ...injectedTransform];
-    // shift after rotation
     injectedTransform.push({
       translateX: size.width * (defaultAnchorPoint.x - anchorPoint.x),
     });
   }
 
-  if (!Array.isArray(injectedTransform)) {
-    return { transform: injectedTransform };
-  }
-
   if (anchorPoint.y !== defaultAnchorPoint.y && size.height) {
-    const shiftTranslateY = [];
-    // shift before rotation
-    shiftTranslateY.push({
-      translateY: size.height * (anchorPoint.y - defaultAnchorPoint.y),
-    });
+    const shiftTranslateY: TransformArray = [
+      {
+        translateY: size.height * (anchorPoint.y - defaultAnchorPoint.y),
+      },
+    ];
     injectedTransform = [...shiftTranslateY, ...injectedTransform];
-    // shift after rotation
     injectedTransform.push({
       translateY: size.height * (defaultAnchorPoint.y - anchorPoint.y),
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { LANGUAGES } from '@/constants';
@@ -32,6 +32,7 @@ const LanguageCell = (props: LanguageCellProps) => {
   const { item, index, currentLanguage, onChangeLanguage } = props;
   const hapticSelection = useHaptic();
   const { getThemedColor } = useThemeColors();
+  const colorScheme = useColorScheme();
   const handlePress = () => {
     hapticSelection?.();
     onChangeLanguage(item.key);
@@ -46,15 +47,15 @@ const LanguageCell = (props: LanguageCellProps) => {
         <Animated.View
           style={tailwind.style(
             'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-            !isLastItem && 'border-b-[1px] border-blackA-A3',
+            !isLastItem && 'border-b-[1px] border-blackA-A3 dark:border-whiteA-A3',
           )}>
           <Animated.Text
             style={tailwind.style(
-              'text-base capitalize text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px]',
+              'text-base capitalize text-gray-950 dark:text-grayDark-950 font-inter-420-20 leading-[21px] tracking-[0.16px]',
             )}>
             {item.title}
           </Animated.Text>
-          {isSelected && <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} />}
+          {isSelected && <Icon icon={<TickIcon />} stroke={getThemedColor('brand-primary', 'brand-secondary')} size={20} />}
         </Animated.View>
       </Animated.View>
     </Pressable>

@@ -15,7 +15,7 @@ import { INBOX_TYPES, MESSAGE_TYPES, TEXT_MAX_WIDTH } from '@/constants';
 
 import { AudioPlayer } from './AudioCell';
 import { FilePreview } from './FileCell';
-import { ImageContainer } from './ImageCell';
+
 import { VideoPlayer } from './VideoCell';
 import { DeliveryStatus } from './DeliveryStatus';
 import { useAppSelector } from '@/hooks';
@@ -103,7 +103,7 @@ export const ComposedCell = (props: ComposedCellProps) => {
       <Animated.View style={tailwind.style('flex flex-row')}>
         {sender?.name && isIncoming && shouldRenderAvatar ? (
           <Animated.View style={tailwind.style('flex items-end justify-end mr-1')}>
-            <Avatar size={'md'} src={{ uri: sender?.thumbnail }} name={sender?.name || ''} />
+            <Avatar size={'md'} src={{ uri: sender?.thumbnail || undefined }} name={sender?.name || ''} />
           </Animated.View>
         ) : null}
 
@@ -146,6 +146,7 @@ export const ComposedCell = (props: ComposedCellProps) => {
                           key={attachment.fileType + index}
                           style={tailwind.style('flex-1 py-3 px-2 rounded-xl my-2')}>
                           <AudioPlayer
+                            id={String(props.messageData.id)}
                             audioSrc={attachment.dataUrl}
                             {...{ isIncoming, isOutgoing }}
                           />
@@ -170,10 +171,15 @@ export const ComposedCell = (props: ComposedCellProps) => {
                         <Animated.View
                           key={attachment.fileType + index}
                           style={tailwind.style('my-2')}>
-                          <ImageContainer
-                            imageSrc={attachment.dataUrl}
-                            width={300 - 24 - (isPrivate ? 13 : 0)}
-                            height={215}
+                          <Animated.Image
+                            entering={FadeIn}
+                            source={{ uri: attachment.dataUrl }}
+                            style={{
+                              width: Dimensions.get('window').width * 0.65,
+                              height: Dimensions.get('window').width * 0.65,
+                              borderRadius: 8,
+                            }}
+                            resizeMode="cover"
                           />
                         </Animated.View>
                       );
@@ -244,7 +250,7 @@ export const ComposedCell = (props: ComposedCellProps) => {
               src={
                 isTemplate
                   ? require('../../../../assets/local/bot-avatar.png') // eslint-disable-line @typescript-eslint/no-require-imports
-                  : { uri: sender?.thumbnail }
+                  : { uri: sender?.thumbnail || undefined }
               }
               name={sender?.name || ''}
             />

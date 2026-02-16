@@ -6,12 +6,15 @@ import {
   TextInputFocusEventData,
   StyleSheet,
   ScrollView,
+  useColorScheme,
+  TextInput,
 } from 'react-native';
 import Animated, {
   LayoutAnimationConfig,
   LinearTransition,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import { IconProps } from '@/types';
 
 import Svg, { Path, Rect } from 'react-native-svg';
 
@@ -44,13 +47,13 @@ type MessageTextInputProps = {
 };
 type AgentSuggestion = Omit<Agent, 'id'> & Suggestion;
 
-const Unlock = () => {
+const Unlock = (props: IconProps) => {
+  const { stroke } = props;
   return (
     <Svg width="100%" height="100%" viewBox="0 0 29 30" fill="none">
       <Path
         d="M10.3334 14.1667V11.6667C10.3334 10.5616 10.7724 9.50179 11.5538 8.72039C12.3352 7.93899 13.395 7.5 14.5 7.5C15.6051 7.5 16.6649 7.93899 17.4463 8.72039C17.8182 9.09225 18.1125 9.52716 18.3189 10M11.8334 22.5H17.1667C18.5667 22.5 19.2667 22.5 19.8017 22.2275C20.2721 21.9878 20.6545 21.6054 20.8942 21.135C21.1667 20.6 21.1667 19.9 21.1667 18.5V18.1667C21.1667 16.7667 21.1667 16.0667 20.8942 15.5317C20.6545 15.0613 20.2721 14.6788 19.8017 14.4392C19.2667 14.1667 18.5667 14.1667 17.1667 14.1667H11.8334C10.4334 14.1667 9.73337 14.1667 9.19837 14.4392C8.72799 14.6788 8.34555 15.0613 8.10587 15.5317C7.83337 16.0667 7.83337 16.7667 7.83337 18.1667V18.5C7.83337 19.9 7.83337 20.6 8.10587 21.135C8.34555 21.6054 8.72799 21.9878 9.19837 22.2275C9.73337 22.5 10.4334 22.5 11.8334 22.5Z"
-        stroke="black"
-        strokeOpacity="0.565"
+        stroke={stroke}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -59,14 +62,14 @@ const Unlock = () => {
   );
 };
 
-const Locked = () => {
+const Locked = (props: IconProps) => {
+  const { fill, stroke } = props;
   return (
     <Svg width="100%" height="100%" viewBox="0 0 29 30" fill="none">
-      <Rect y="0.5" width="29" height="29" rx="14.5" fill="white" />
+      <Rect y="0.5" width="29" height="29" rx="14.5" fill={fill} />
       <Path
         d="M18.6667 14.1667V11.6667C18.6667 10.5616 18.2277 9.50179 17.4463 8.72039C16.6649 7.93899 15.6051 7.5 14.5 7.5C13.395 7.5 12.3352 7.93899 11.5538 8.72039C10.7724 9.50179 10.3334 10.5616 10.3334 11.6667V14.1667M11.8334 22.5H17.1667C18.5667 22.5 19.2667 22.5 19.8017 22.2275C20.2721 21.9878 20.6545 21.6054 20.8942 21.135C21.1667 20.6 21.1667 19.9 21.1667 18.5V18.1667C21.1667 16.7667 21.1667 16.0667 20.8942 15.5317C20.6545 15.0613 20.2721 14.6788 19.8017 14.4392C19.2667 14.1667 18.5667 14.1667 17.1667 14.1667H11.8334C10.4334 14.1667 9.73337 14.1667 9.19837 14.4392C8.72799 14.6788 8.34555 15.0613 8.10587 15.5317C7.83337 16.0667 7.83337 16.7667 7.83337 18.1667V18.5C7.83337 19.9 7.83337 20.6 8.10587 21.135C8.34555 21.6054 8.72799 21.9878 9.19837 22.2275C9.73337 22.5 10.4334 22.5 11.8334 22.5Z"
-        stroke="black"
-        strokeOpacity="0.565"
+        stroke={stroke}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -76,7 +79,6 @@ const Locked = () => {
 };
 const TYPING_INDICATOR_IDLE_TIME = 4000;
 
-// eslint-disable-next-line no-empty-pattern
 export const MessageTextInput = ({
   maxLength,
   replyEditorMode,
@@ -84,7 +86,27 @@ export const MessageTextInput = ({
   agents,
 }: MessageTextInputProps) => {
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
   const messageContent = useAppSelector(selectMessageContent);
+
+  const listShadowStyle = useMemo(() => {
+    return Platform.select({
+      ios: {
+        shadowColor: '#00000040',
+        shadowOffset: { width: 0, height: 0.15 },
+        shadowRadius: 2,
+        shadowOpacity: 0.35,
+        elevation: 2,
+      },
+      android: {
+        elevation: 4,
+        backgroundColor:
+          colorScheme === 'dark'
+            ? tailwind.color('brand-background-dark')
+            : tailwind.color('brand-background'),
+      },
+    }) || {};
+  }, [colorScheme]);
 
   const lockIconAnimatedPosition = useAnimatedStyle(() => {
     return {
@@ -94,6 +116,9 @@ export const MessageTextInput = ({
 
   const { setAddMenuOptionSheetState, textInputRef, setIsTextInputFocused, conversationId } =
     useChatWindowContext();
+
+  // Casting textInputRef para React.RefObject<TextInput> para garantir a propriedade current
+  const typedTextInputRef = textInputRef as React.RefObject<TextInput>;
 
   const isPrivateMessage = useAppSelector(selectIsPrivateMessage);
   const quoteMessage = useAppSelector(selectQuoteMessage);
@@ -143,32 +168,25 @@ export const MessageTextInput = ({
       setAddMenuOptionSheetState(false);
       setIsTextInputFocused(true);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
   useEffect(() => {
     if (selectedCannedResponse) onChangeText(selectedCannedResponse);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCannedResponse]);
 
   useEffect(() => {
     if (quoteMessage !== null) {
-      // Focussing Text Input when you have decided to reply
-      // @ts-expect-error TextInput ref focus method may not be properly typed
-      textInputRef?.current?.focus();
+      typedTextInputRef?.current?.focus();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quoteMessage]);
+  }, [quoteMessage, typedTextInputRef]);
 
   const handleOnBlur = useCallback(
     (_args: NativeSyntheticEvent<TextInputFocusEventData>) => {
-      // shouldHandleKeyboardEvents.value = false;
       setIsTextInputFocused(false);
       onBlur();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [onBlur],
   );
 
   const toggleReplyMode = () => {
@@ -179,7 +197,6 @@ export const MessageTextInput = ({
 
   const renderSuggestions: (suggestions: Agent[]) => FC<MentionSuggestionsProps> =
     suggestions =>
-    // eslint-disable-next-line react/display-name
     ({ keyword, onSuggestionPress }) => {
       if (keyword == null || !isPrivateMessage) {
         return null;
@@ -191,10 +208,10 @@ export const MessageTextInput = ({
         <Animated.View
           style={[
             tailwind.style(
-              'bg-brand-background border-t border-gray-200 rounded-[13px] mx-4 px-2 w-full max-h-[250px]',
+              'bg-brand-background dark:bg-brand-background-dark border-t border-gray-200 dark:border-grayDark-200 rounded-[13px] mx-4 px-2 w-full max-h-[250px]',
               Platform.OS === 'ios' ? 'absolute bottom-full' : 'relative h-[150px]',
             ),
-            styles.listShadow,
+            listShadowStyle,
           ]}>
           <ScrollView keyboardShouldPersistTaps="always">
             {filteredSuggestions.map(agent => {
@@ -218,38 +235,56 @@ export const MessageTextInput = ({
     };
   const renderMentionSuggestions = renderSuggestions(agents);
 
+  const lockedIconFill =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-background-dark')
+      : tailwind.color('brand-background');
+  const lockedIconStroke =
+    colorScheme === 'dark'
+      ? tailwind.color('grayDark-950')
+      : tailwind.color('gray-950');
+  const unlockedIconStroke =
+    colorScheme === 'dark'
+      ? tailwind.color('grayDark-950')
+      : tailwind.color('gray-700');
+
   return (
     <LayoutAnimationConfig skipEntering={true}>
       <Animated.View
         layout={LinearTransition.springify().damping(20).stiffness(120)}
         style={[tailwind.style('flex-1 my-0.5')]}>
         <MentionInput
-          // @ts-expect-error MentionInput ref typing issue with forwardRef
-          ref={textInputRef}
-          layout={LinearTransition.springify().damping(20).stiffness(120)}
+          ref={typedTextInputRef}
           onChange={onChangeText}
           partTypes={[
             {
               trigger: '@',
               renderSuggestions: renderMentionSuggestions,
-              textStyle: tailwind.style('text-amber-950 font-inter-medium-24'),
+              textStyle: tailwind.style(
+                'text-amber-950 dark:text-amberDark-900 font-inter-medium-24',
+              ),
               allowedSpacesCount: 0,
               isInsertSpaceAfterMention: true,
             },
           ]}
-          maxNumberOfLines={3}
+          numberOfLines={3}
           multiline
           enablesReturnKeyAutomatically
           style={[
             tailwind.style(
               'text-base font-inter-normal-20 tracking-[0.24px] leading-[20px] android:leading-[18px]',
-              'ml-[5px] mr-2 py-2 pl-3 pr-[36px] rounded-2xl text-gray-950',
+              'ml-[5px] mr-2 py-2 pl-3 pr-[36px] rounded-2xl text-gray-950 dark:text-grayDark-950',
               'min-h-9 max-h-[76px]',
-              isPrivateMessage ? 'bg-amber-100' : 'bg-blackA-A4',
+              isPrivateMessage
+                ? 'bg-amber-100 dark:bg-amberDark-100'
+                : 'bg-blackA-A4 dark:bg-whiteA-A4',
             ),
-            // TODO: Try settings includeFontPadding to false and have a single lineHeight value of 20
           ]}
-          placeholderTextColor={tailwind.color('bg-gray-800')}
+          placeholderTextColor={
+            colorScheme === 'dark'
+              ? tailwind.color('text-grayDark-800')
+              : tailwind.color('text-gray-800')
+          }
           maxLength={maxLength}
           placeholder={
             isPrivateMessage
@@ -266,16 +301,12 @@ export const MessageTextInput = ({
         />
       </Animated.View>
       <Animated.View
-        style={[
-          // Pre calculated value to position the lock
-          tailwind.style('absolute right-13px]'),
-          lockIconAnimatedPosition,
-        ]}>
+        style={[tailwind.style('absolute right-13px]'), lockIconAnimatedPosition]}>
         <Pressable hitSlop={5} onPress={toggleReplyMode}>
           {isPrivateMessage ? (
-            <Icon size={29} icon={<Locked />} />
+            <Icon icon={<Locked />} fill={lockedIconFill} stroke={lockedIconStroke} size={29} />
           ) : (
-            <Icon size={29} icon={<Unlock />} />
+            <Icon icon={<Unlock />} stroke={unlockedIconStroke} size={29} />
           )}
         </Pressable>
       </Animated.View>
@@ -283,19 +314,3 @@ export const MessageTextInput = ({
   );
 };
 
-const styles = StyleSheet.create({
-  listShadow:
-    Platform.select({
-      ios: {
-        shadowColor: '#00000040',
-        shadowOffset: { width: 0, height: 0.15 },
-        shadowRadius: 2,
-        shadowOpacity: 0.35,
-        elevation: 2,
-      },
-      android: {
-        elevation: 4,
-        backgroundColor: tailwind.color('brand-background'),
-      },
-    }) || {}, // Add fallback empty object
-});

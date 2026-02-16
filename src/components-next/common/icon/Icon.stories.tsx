@@ -8,8 +8,7 @@ const meta = {
   title: 'Icon',
   component: Icon,
   args: {
-    icon: <ConversationIconFilled />,
-    size: 'xl',
+          icon: <ConversationIconFilled color="black" />,    size: 'xl',
   },
   decorators: [
     Story => (
@@ -33,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 export const BasicIcon: Story = {
   render: () => (
     <View style={{ gap: 10 }}>
-      <Icon icon={<ConversationIconOutline />} />
+      <Icon icon={<ConversationIconOutline color="black" />} />
     </View>
   ),
 };
@@ -41,12 +40,12 @@ export const BasicIcon: Story = {
 export const IconSizes: Story = {
   render: () => (
     <View style={{ gap: 32, alignItems: 'center' }}>
-      <Icon icon={<ConversationIconOutline />} size={10} />
-      <Icon icon={<ConversationIconOutline />} size={12} />
-      <Icon icon={<ConversationIconOutline />} size={16} />
-      <Icon icon={<ConversationIconOutline />} size={20} />
-      <Icon icon={<ConversationIconOutline />} size={24} />
-      <Icon icon={<ConversationIconOutline />} size={32} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={10} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={12} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={16} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={20} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={24} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={32} />
     </View>
   ),
 };
@@ -55,8 +54,8 @@ export const IconSizes: Story = {
 export const IconVariants: Story = {
   render: () => (
     <View style={{ gap: 16, flexDirection: 'row' }}>
-      <Icon icon={<ConversationIconFilled />} size={24} />
-      <Icon icon={<ConversationIconOutline />} size={24} />
+      <Icon icon={<ConversationIconFilled color="black" />} size={24} />
+      <Icon icon={<ConversationIconOutline color="black" />} size={24} />
     </View>
   ),
 };

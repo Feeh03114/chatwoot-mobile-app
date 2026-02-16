@@ -62,13 +62,13 @@ export const ReplyWarning = (props: ReplyWarningProps) => {
       <Animated.View style={tailwind.style('flex-1')}>
         <Animated.Text
           style={tailwind.style(
-            'text-sm tracking-[0.32px] leading-[15px] font-inter-420-20 text-white dark:text-whiteA-A9',
+            'text-sm tracking-[0.32px] leading-[15px] font-inter-420-20 text-white dark:text-grayDark-950',
           )}>
           {`${replyBannerMessage()} `}
           <Animated.Text
             onPress={() => openURL({ URL: replyWindowLink() })}
             style={tailwind.style(
-              'text-sm tracking-[0.32px] leading-[15px] font-inter-420-20 text-white dark:text-whiteA-A9 underline',
+              'text-sm tracking-[0.32px] leading-[15px] font-inter-420-20 text-white dark:text-grayDark-950 underline',
             )}>
             {replyWindowLinkText()}
           </Animated.Text>

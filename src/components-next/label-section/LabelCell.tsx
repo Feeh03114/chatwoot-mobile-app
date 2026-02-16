@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { tailwind } from '@/theme';
 import { Label } from '@/types/common/Label';
@@ -18,6 +18,7 @@ type LabelCellProps = {
 export const LabelCell = (props: LabelCellProps) => {
   const { value, isLastItem, handleLabelPress, isActive = false } = props;
   const { getThemedColor } = useThemeColors();
+  const colorScheme = useColorScheme();
 
   const handleOnPress = () => {
     handleLabelPress(value.title);
@@ -29,17 +30,17 @@ export const LabelCell = (props: LabelCellProps) => {
       <Animated.View
         style={tailwind.style(
           'flex-1 ml-3 flex-row justify-between py-[11px] pr-3',
-          !isLastItem ? 'border-b-[1px] border-blackA-A3' : '',
+          !isLastItem ? 'border-b-[1px] border-blackA-A3 dark:border-whiteA-A3' : '',
         )}>
         <Animated.Text
           style={[
             tailwind.style(
-              'text-base text-gray-950 font-inter-420-20 leading-[21px] tracking-[0.16px]',
+              'text-base text-gray-950 dark:text-grayDark-950 font-inter-420-20 leading-[21px] tracking-[0.16px]',
             ),
           ]}>
           {value.title}
         </Animated.Text>
-        {isActive ? <Icon icon={<TickIcon stroke={getThemedColor('brand-primary', 'brand-secondary')} />} size={20} /> : null}
+        {isActive ? <Icon icon={<TickIcon />} stroke={getThemedColor('brand-primary', 'brand-secondary')} size={20} /> : null}
       </Animated.View>
     </Pressable>
   );

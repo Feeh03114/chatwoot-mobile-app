@@ -26,10 +26,10 @@ const ListItem = (props: ListItemProps) => {
           <Avatar src={{ uri: listItem.thumbnail || undefined }} size="lg" />
         </Animated.View>
         <Animated.View
-          style={tailwind.style('flex-1 py-[11px] ml-2 border-b-[1px] border-b-blackA-A3')}>
+          style={tailwind.style('flex-1 py-[11px] ml-2 border-b-[1px] border-blackA-A3')}>
           <Animated.Text
             style={tailwind.style(
-              'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950',
+              'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950 dark:text-grayDark-950',
             )}>
             {listItem.name}
           </Animated.Text>
@@ -41,13 +41,13 @@ const ListItem = (props: ListItemProps) => {
 
 const ParticipantOverflowCell = ({ count }: { count: number }) => {
   return (
-    <Pressable style={({ pressed }) => [tailwind.style(pressed ? 'bg-gray-100' : '')]}>
+    <Pressable style={({ pressed }) => [tailwind.style(pressed ? 'bg-gray-100 dark:bg-grayDark-100' : '')]}>
       <Animated.View style={tailwind.style('flex flex-row items-center ml-3')}>
         <Animated.View>
           <Icon icon={<Overflow stroke={tailwind.color('text-gray-600')} />} size={28} />
         </Animated.View>
         <Animated.View
-          style={tailwind.style('flex-1 py-[11px] ml-2 border-b-[1px] border-b-blackA-A3')}>
+          style={tailwind.style('flex-1 py-[11px] ml-2 border-b-[1px] border-blackA-A3')}>
           <Animated.Text
             style={tailwind.style(
               'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950',
@@ -79,7 +79,7 @@ export const AddParticipantList = (props: AddParticipantListProps) => {
           {i18n.t('CONVERSATION_PARTICIPANTS.TITLE')}
         </Animated.Text>
       </Animated.View>
-      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background'), styles.listShadow]}>
+      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background dark:bg-grayDark-500'), styles.listShadow]}>
         {conversationParticipants &&
           conversationParticipants.slice(0, 4).map((listItem, index) => {
             return <ListItem key={index} {...{ listItem, index }} />;
@@ -92,7 +92,13 @@ export const AddParticipantList = (props: AddParticipantListProps) => {
           ]}>
           <Animated.View style={tailwind.style('flex flex-row items-center ml-3')}>
             <Animated.View style={tailwind.style('p-0.5')}>
-              <Icon icon={<AddParticipant stroke={tailwind.color('text-brand-primary')} />} size={24} />
+              <Icon
+                icon={<AddParticipant />}
+                stroke={
+                  tailwind.style('text-brand-primary dark:text-brand-primary-dark').color as string
+                }
+                size={24}
+              />
             </Animated.View>
             <Animated.View style={tailwind.style('flex-1 py-[11px] ml-2')}>
               <Animated.Text
@@ -120,8 +126,7 @@ const styles = StyleSheet.create({
         elevation: 2,
       },
       android: {
-        elevation: 4,
-        backgroundColor: tailwind.color('brand-background'),
+        elevation: 4
       },
     }) || {}, // Add fallback empty object
 });

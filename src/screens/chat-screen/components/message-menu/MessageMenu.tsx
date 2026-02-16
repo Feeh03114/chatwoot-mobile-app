@@ -16,9 +16,11 @@ import { useThemeColors } from '@/hooks/useThemeColors'; // Adicionar import
 
 export type MenuOption = {
   title: string;
-  icon: React.ReactNode | JSX.Element;
+  icon: React.ReactNode;
   handleOnPressMenuOption: () => void;
   destructive?: boolean;
+  stroke?: string;
+  fill?: string;
 };
 
 type MessageMenuProps = {
@@ -104,7 +106,7 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
     [],
   );
 
-  const { getThemedColor } = useThemeColors(); // Adicionar useThemeColors
+  const { getThemedColor, theme: colorScheme } = useThemeColors();
 
   if (menuOptions?.length === 0) {
     return <React.Fragment>{children}</React.Fragment>;
@@ -120,9 +122,16 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
         <BottomSheetModal
           ref={contextMenuSheetRef}
           backdropComponent={renderBackDrop}
-          handleIndicatorStyle={tailwind.style(
-            'overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]',
-          )}
+        handleIndicatorStyle={{
+            backgroundColor:
+              colorScheme === 'dark'
+                ? 'hsla(0, 0%, 100%, 0.169)'
+                : 'hsla(0, 0%, 0%, 0.133)',
+            overflow: 'hidden',
+            width: 32,
+            height: 4,
+            borderRadius: 11,
+          }}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('mx-3 rounded-[26px] overflow-hidden')}
           detached

@@ -1,5 +1,5 @@
 import React, { forwardRef, PropsWithChildren, useCallback, useRef } from 'react';
-import { Platform, Pressable, View } from 'react-native';
+import { Platform, Pressable, View, useColorScheme } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -76,6 +76,7 @@ type ChatDropdownMenuProps = {
 };
 
 export const ChatDropdownMenu = (props: PropsWithChildren<ChatDropdownMenuProps>) => {
+  const colorScheme = useColorScheme();
   const { children, dropdownMenuList } = props;
 
   const contextMenuSheetRef = useRef<BottomSheetModal>(null);
@@ -114,9 +115,16 @@ export const ChatDropdownMenu = (props: PropsWithChildren<ChatDropdownMenuProps>
         <BottomSheetModal
           ref={contextMenuSheetRef}
           backdropComponent={renderBackDrop}
-          handleIndicatorStyle={tailwind.style(
-            'overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]',
-          )}
+        handleIndicatorStyle={{
+            backgroundColor:
+              colorScheme === 'dark'
+                ? 'hsla(0, 0%, 100%, 0.169)'
+                : 'hsla(0, 0%, 0%, 0.133)',
+            overflow: 'hidden',
+            width: 32,
+            height: 4,
+            borderRadius: 11,
+          }}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('mx-3 rounded-[26px] overflow-hidden')}
           detached

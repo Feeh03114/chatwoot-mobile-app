@@ -191,6 +191,7 @@ export const AudioPlayer = (props: AudioPlayerProps) => {
 
 export const AudioCell: React.FC<AudioCellProps> = props => {
   const {
+    id,
     audioSrc,
     shouldRenderAvatar,
     messageType,
@@ -237,7 +238,7 @@ export const AudioCell: React.FC<AudioCellProps> = props => {
                   : '',
               ),
             ]}>
-            <AudioPlayer {...{ audioSrc, isIncoming, isOutgoing }} />
+            <AudioPlayer {...{ audioSrc, isIncoming, isOutgoing, id }} />
             <Animated.View
               style={tailwind.style(
                 'h-[21px] pt-[5px] pb-0.5 flex flex-row items-center self-end pl-1.5',

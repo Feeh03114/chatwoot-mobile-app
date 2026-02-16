@@ -1,12 +1,12 @@
 /* eslint-disable react/display-name */
 import React, { memo } from 'react';
+import { useColorScheme } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 
 import { Icon } from '@/components-next/common';
 import { AnimatedNativeView } from '@/components-next/native-components';
 import { CheckedIcon, UncheckedIcon } from '@/svg-icons';
 import { tailwind } from '@/theme';
-import { useThemeColors } from '@/hooks/useThemeColors';
 
 type ConversationSelectProps = {
   isSelected: boolean;
@@ -15,11 +15,20 @@ type ConversationSelectProps = {
 
 export const ConversationSelect = memo((props: ConversationSelectProps) => {
   const { isSelected, currentState } = props;
-  const { getThemedColor } = useThemeColors();
+  const colorScheme = useColorScheme();
 
-  const checkedFillColor = getThemedColor('brand-primary', 'brand-primary-dark');
-  const checkedStrokeColor = getThemedColor('text-whiteA-A9', 'text-whiteA-A9');
-  const uncheckedStrokeColor = getThemedColor('text-gray-800', 'text-grayDark-800');
+  const checkedFillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('brand-primary-dark')
+      : tailwind.color('brand-primary');
+  const checkedStrokeColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-whiteA-A9')
+      : tailwind.color('text-whiteA-A9');
+  const uncheckedStrokeColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-800')
+      : tailwind.color('text-gray-800');
 
   return currentState === 'Select' ? (
     <AnimatedNativeView
@@ -28,7 +37,7 @@ export const ConversationSelect = memo((props: ConversationSelectProps) => {
       <Icon
         icon={
           isSelected ? (
-            <CheckedIcon fillColor={checkedFillColor} strokeColor={checkedStrokeColor} />
+            <CheckedIcon fill={checkedFillColor} stroke={checkedStrokeColor} />
           ) : (
             <UncheckedIcon stroke={uncheckedStrokeColor} />
           )

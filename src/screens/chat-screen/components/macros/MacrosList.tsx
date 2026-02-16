@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
@@ -16,6 +16,7 @@ import MacroDetails from './MacroDetails';
 import { MacroProvider } from './MacroContext';
 
 export const MacrosList = ({ conversationId }: { conversationId: number }) => {
+  const colorScheme = useColorScheme();
   const macros = useAppSelector(selectAllMacros);
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
 
@@ -39,9 +40,14 @@ export const MacrosList = ({ conversationId }: { conversationId: number }) => {
       <BottomSheetModal
         ref={macrosListSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style('overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]')}
-        handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
-        style={tailwind.style('rounded-t-[26px] overflow-hidden')}
+        handleIndicatorStyle={{
+          backgroundColor: colorScheme === 'dark' ? 'hsla(0, 0%, 100%, 0.169)' : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
+        style={tailwind.style('rounded-[26px] overflow-hidden')}
         enablePanDownToClose
         snapPoints={['75%']}
         enableDynamicSizing={false}>

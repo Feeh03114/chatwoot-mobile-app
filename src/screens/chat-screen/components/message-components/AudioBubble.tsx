@@ -3,7 +3,7 @@ import { Platform, Pressable, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, runOnJS, useSharedValue } from 'react-native-reanimated';
 import Svg, { Path, Rect } from 'react-native-svg';
 import * as Sentry from '@sentry/react-native';
-import { Audio, AVPlaybackStatus } from 'expo-av';
+import { Audio, AVPlaybackStatus, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/hooks';
@@ -83,7 +83,7 @@ const PlayerHub = (() => {
    * @returns A promise that resolves when the enqueued function completes.
    */
   const enqueue = (fn: () => Promise<void>) => {
-    opChain = opChain.then(fn).catch((e) => Sentry.captureException(e)); // Log errors instead of swallowing.
+    opChain = opChain.then(fn).catch((e) => { Sentry.captureException(e); }); // Log errors instead of swallowing.
     return opChain;
   };
 
@@ -96,10 +96,10 @@ const PlayerHub = (() => {
     try {
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
-        interruptionModeIOS: Audio.InterruptionModeIOS.DoNotMix, // Do not mix with other audio sources on iOS.
+        interruptionModeIOS: InterruptionModeIOS.DoNotMix, // Do not mix with other audio sources on iOS.
         playsInSilentModeIOS: true, // Allow playback when the device is in silent mode on iOS.
         staysActiveInBackground: false, // Audio should not stay active if app goes to background.
-        interruptionModeAndroid: Audio.InterruptionModeAndroid.DoNotMix, // Do not mix with other audio sources on Android.
+        interruptionModeAndroid: InterruptionModeAndroid.DoNotMix, // Do not mix with other audio sources on Android.
         shouldDuckAndroid: true, // Reduce volume of other audio when this audio plays on Android.
         playThroughEarpieceAndroid: false, // Play through speaker, not earpiece, on Android.
       });

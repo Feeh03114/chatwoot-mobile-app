@@ -98,7 +98,7 @@ const SettingsScreen = () => {
 
   const pushToken = useAppSelector(selectPushToken);
 
-  const userPermissions = getUserPermissions(user, activeAccountId);
+  const userPermissions = user ? getUserPermissions(user, activeAccountId ?? null) : [];
 
   const hasConversationPermission = CONVERSATION_PERMISSIONS.some(permission =>
     userPermissions.includes(permission),
@@ -134,6 +134,12 @@ const SettingsScreen = () => {
   const enableAccountSwitch = accounts.length > 1;
 
   const activeLocale = useSelector(selectLocale);
+
+    const iconColor =
+      colorScheme === 'dark'
+        ? tailwind.color('grayDark-950') || 'gray'
+        : tailwind.color('gray-950') || 'gray';
+
   const {
     userAvailabilityStatusSheetRef,
     languagesModalSheetRef,
@@ -216,6 +222,7 @@ const SettingsScreen = () => {
       hasChevron: true,
       title: i18n.t('SETTINGS.CHANGE_AVAILABILITY'),
       icon: <SwitchIcon />,
+      stroke: iconColor,
       subtitle: '',
       subtitleType: 'light',
       onPressListItem: () => openSheet(),
@@ -224,6 +231,7 @@ const SettingsScreen = () => {
       hasChevron: true,
       title: i18n.t('SETTINGS.NOTIFICATIONS'),
       icon: <NotificationIcon />,
+      stroke: iconColor,
       subtitle: '',
       subtitleType: 'light',
       disabled: !hasConversationPermission,
@@ -234,6 +242,7 @@ const SettingsScreen = () => {
       hasChevron: true,
       title: i18n.t('SETTINGS.CHANGE_LANGUAGE'),
       icon: <TranslateIcon />,
+      stroke: iconColor,
       subtitle: LANGUAGES[activeLocale as keyof typeof LANGUAGES],
       subtitleType: 'light',
       onPressListItem: () => languagesModalSheetRef.current?.present(),
@@ -242,6 +251,7 @@ const SettingsScreen = () => {
       hasChevron: enableAccountSwitch,
       title: i18n.t('SETTINGS.SWITCH_ACCOUNT'),
       icon: <SwitchIcon />,
+      stroke: iconColor,
       subtitle: activeAccountName,
       subtitleType: 'light',
       onPressListItem: () => {
@@ -257,6 +267,7 @@ const SettingsScreen = () => {
       hasChevron: true,
       title: i18n.t('SETTINGS.READ_DOCS'),
       icon: <SwitchIcon />,
+      stroke: iconColor,
       subtitle: '',
       subtitleType: 'light',
       onPressListItem: openURL,
@@ -265,6 +276,7 @@ const SettingsScreen = () => {
       hasChevron: true,
       title: i18n.t('SETTINGS.CHAT_WITH_US'),
       icon: <ChatwootIcon />,
+      stroke: iconColor,
       subtitle: '',
       subtitleType: 'light',
       onPressListItem: () => toggleWidget(true),
@@ -273,9 +285,10 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView
-      style={tailwind.style(
-        'flex-1 bg-brand-background dark:bg-brand-background-dark font-inter-normal-20',
-      )}>
+      style={{
+        flex: 1,
+        backgroundColor: colorScheme === 'dark' ? tailwind.color('brand-background-dark') : tailwind.color('brand-background'),
+      }}>
       <StatusBar
         barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor="transparent"
@@ -289,15 +302,21 @@ const SettingsScreen = () => {
           <Animated.View>
             <UserAvatar src={avatarUrl} name={name} status={availabilityStatus} />
             <Animated.View
-              style={tailwind.style(
-                'absolute border-[2px] border-white dark:border-grayDark-100 rounded-full -bottom-[2px] right-[10px]',
-              )}></Animated.View>
+              style={[
+                tailwind.style('absolute border-[2px] rounded-full -bottom-[2px] right-[10px]'),
+                {
+                  borderColor: colorScheme === 'dark' ? tailwind.color('grayDark-100') : tailwind.color('white'),
+                },
+              ]}></Animated.View>
           </Animated.View>
           <Animated.View style={tailwind.style('flex flex-col items-center gap-1')}>
             <Animated.Text
-              style={tailwind.style(
-                'text-[22px] font-inter-580-24 text-gray-950 dark:text-grayDark-950',
-              )}>
+              style={[
+                tailwind.style('text-[22px] font-inter-580-24'),
+                {
+                  color: colorScheme === 'dark' ? tailwind.color('grayDark-950') : tailwind.color('gray-950'),
+                },
+              ]}>
               {name}
             </Animated.Text>
             <Animated.Text
@@ -331,15 +350,18 @@ const SettingsScreen = () => {
         </Pressable>
       </Animated.ScrollView>
       <BottomSheetModal
-        ref={userAvailabilityStatusSheetRef}
-        backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
-        // TODO: Fix this later
-        // bottomInset={bottom === 0 ? 12 : bottom}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
         style={tailwind.style('rounded-[26px] overflow-hidden')}
         snapPoints={[190]}>
@@ -352,13 +374,16 @@ const SettingsScreen = () => {
         </BottomSheetWrapper>
       </BottomSheetModal>
       <BottomSheetModal
-        ref={languagesModalSheetRef}
-        backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
-        // TODO: Fix this later
-        // bottomInset={bottom === 0 ? 12 : bottom}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -372,11 +397,16 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={notificationPreferencesSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
-        // TODO: Fix this later
-        // bottomInset={bottom === 0 ? 12 : bottom}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -390,11 +420,16 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={switchAccountSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
-        // TODO: Fix this later
-        // bottomInset={bottom === 0 ? 12 : bottom}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -412,9 +447,16 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={debugActionsSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

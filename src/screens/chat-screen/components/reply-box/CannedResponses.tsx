@@ -24,13 +24,18 @@ const CannedResponseItem = ({
   return (
     <Pressable
       onPress={() => onSelect(item)}
-      style={tailwind.style(
-        'w-full flex-row justify-between items-center border-b border-gray-200 py-3 px-4',
-      )}>
-      <Animated.Text numberOfLines={1} style={tailwind.style('text-md flex-1 text-gray-950')}>
+      style={({ pressed }) =>
+        tailwind.style(
+          'w-full flex-row justify-between items-center border-b border-gray-200 dark:border-grayDark-200 py-3 px-4',
+          pressed ? 'bg-gray-100 dark:bg-grayDark-100' : '',
+        )
+      }>
+      <Animated.Text
+        numberOfLines={1}
+        style={tailwind.style('text-md flex-1 text-gray-950 dark:text-grayDark-950')}>
         {item.content.replace(/\n/g, ' ')}
       </Animated.Text>
-      <Animated.Text style={tailwind.style('text-sm text-gray-900 ml-2')}>
+      <Animated.Text style={tailwind.style('text-sm text-gray-900 dark:text-grayDark-900 ml-2')}>
         {`/${item.shortCode}`}
       </Animated.Text>
     </Pressable>
@@ -55,7 +60,7 @@ export const CannedResponses = (props: CannedResponsesProps) => {
     <Animated.View
       style={[
         tailwind.style(
-          'left-0 right-0 bg-brand-background border-t border-gray-200 max-h-[180px] relative bottom-0 h-[180px]',
+          'left-0 right-0 bg-brand-background dark:bg-brand-background-dark border-t border-gray-200 dark:border-grayDark-200 max-h-[180px] relative bottom-0 h-[180px]',
         ),
       ]}>
       <FlashList

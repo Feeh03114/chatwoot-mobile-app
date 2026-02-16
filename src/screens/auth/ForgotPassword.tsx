@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Animated, StatusBar, TextInput, View } from 'react-native';
+import { Animated, StatusBar, TextInput, View, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Icon } from '@/components-next';
@@ -22,6 +22,7 @@ type FormData = {
 
 const ForgotPassword = () => {
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     dispatch(resetAuth());
@@ -41,19 +42,27 @@ const ForgotPassword = () => {
 
   return (
       <SafeAreaView style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
-        <StatusBar backgroundColor={tailwind.color('bg-brand-background')} />
+        <StatusBar
+          backgroundColor={
+            tailwind.style('bg-brand-background dark:bg-brand-background-dark').backgroundColor as string
+          }
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        />
         <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tailwind.style('px-6 pt-16')}>
           <Icon icon={<KeyRoundIcon />} size={40} />
           <View style={tailwind.style('pt-6 gap-4')}>
-            <Animated.Text style={tailwind.style('text-2xl text-gray-950 font-inter-semibold-20')}>
+            <Animated.Text
+              style={tailwind.style(
+                'text-2xl text-gray-950 dark:text-grayDark-50 font-inter-semibold-20',
+              )}>
               {i18n.t('FORGOT_PASSWORD.TITLE')}
             </Animated.Text>
             <Animated.Text
               style={tailwind.style(
-                'font-inter-normal-20 leading-[18px] tracking-[0.32px] text-gray-900',
+                'font-inter-normal-20 leading-[18px] tracking-[0.32px] text-gray-900 dark:text-grayDark-300',
               )}>
               {i18n.t('FORGOT_PASSWORD.SUB_TITLE')}
             </Animated.Text>
@@ -70,26 +79,33 @@ const ForgotPassword = () => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={tailwind.style('pt-8 mb-8 gap-2')}>
-                <Animated.Text style={tailwind.style('font-inter-420-20 text-gray-950')}>
+                <Animated.Text
+                  style={tailwind.style(
+                    'font-inter-420-20 text-gray-950 dark:text-grayDark-50',
+                  )}>
                   {i18n.t('LOGIN.EMAIL')}
                 </Animated.Text>
                 <TextInput
                   style={[
                     tailwind.style(
                       'text-base font-inter-normal-20 tracking-[0.24px] leading-[20px] android:leading-[18px]',
-                      'py-2 px-3 rounded-xl text-gray-950 bg-blackA-A4',
+                      'py-2 px-3 rounded-xl text-gray-950 dark:text-grayDark-50 bg-blackA-A4 dark:bg-grayDark-900',
                       'h-10',
                     ),
                   ]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  placeholderTextColor={tailwind.color('text-gray-900')}
+                  placeholderTextColor={
+                    tailwind.style(
+                      colorScheme === 'dark' ? 'text-grayDark-100' : 'text-gray-900',
+                    ).color as string
+                  }
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
                 {errors.email && (
-                  <Animated.Text style={tailwind.style('text-ruby-900')}>
+                  <Animated.Text style={tailwind.style('text-ruby-900 dark:text-rubyDark-900')}>
                     {errors.email.message}
                   </Animated.Text>
                 )}

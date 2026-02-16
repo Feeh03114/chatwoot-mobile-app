@@ -159,7 +159,10 @@ const Tabs = () => {
       initialRouteName="Inbox"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: tailwind.color('bg-brand-background dark:bg-brand-background-dark') },
+        tabBarStyle: {
+          backgroundColor: tailwind.style('bg-brand-background dark:bg-brand-background-dark')
+            .backgroundColor as string,
+        },
       }}>
       {hasConversationPermission && (
         <Tab.Screen name="Inbox" component={InboxStack} options={{ headerShown: false }} />
@@ -184,7 +187,10 @@ export const AppTabs = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: tailwind.color('bg-brand-background dark:bg-brand-background-dark') },
+          contentStyle: {
+            backgroundColor: tailwind.style('bg-brand-background dark:bg-brand-background-dark')
+              .backgroundColor as string,
+          },
         }}>
         <Stack.Screen name="Tab" component={Tabs} />
         <Stack.Screen

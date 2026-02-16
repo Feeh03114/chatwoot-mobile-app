@@ -57,13 +57,18 @@ const LeftSection = ({ currentState, isSelectedAll, onLeftIconPress }: LeftSecti
   const { entering, exiting } = useHeaderAnimation();
   const colorScheme = useColorScheme();
 
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-800')
+      : tailwind.color('text-gray-800');
+
   if (currentState === 'Filter' || currentState === 'Search') return null;
   if (currentState !== 'Select') {
     return (
       <Animated.View style={tailwind.style('flex-1 items-start')}>
         <Pressable onPress={onLeftIconPress} hitSlop={16}>
           <Animated.View exiting={exiting} entering={entering}>
-            <Icon size={24} icon={<SearchIcon />} />
+            <Icon size={24} icon={<SearchIcon />} stroke={iconColor} />
           </Animated.View>
         </Pressable>
       </Animated.View>
@@ -72,8 +77,8 @@ const LeftSection = ({ currentState, isSelectedAll, onLeftIconPress }: LeftSecti
 
   const uncheckedIconStrokeColor =
     colorScheme === 'dark'
-      ? tailwind.color('text-grayDark-800')
-      : tailwind.color('text-gray-800');
+      ? tailwind.color('grayDark-950') || 'gray'
+      : tailwind.color('gray-950') || 'gray';
 
   return (
     <Animated.View style={tailwind.style('flex-1 items-start')}>
@@ -81,13 +86,9 @@ const LeftSection = ({ currentState, isSelectedAll, onLeftIconPress }: LeftSecti
         <Animated.View exiting={exiting} entering={entering}>
           <Icon
             size={24}
-            icon={
-              isSelectedAll ? (
-                <CheckedIcon />
-              ) : (
-                <UncheckedIcon stroke={uncheckedIconStrokeColor} />
-              )
-            }
+            icon={isSelectedAll ? <CheckedIcon /> : <UncheckedIcon />}
+            fill={isSelectedAll ? undefined : uncheckedIconStrokeColor || 'gray'}
+            stroke={isSelectedAll ? undefined : uncheckedIconStrokeColor || 'gray'}
           />
         </Animated.View>
       </Pressable>
@@ -145,7 +146,7 @@ const RightSection = ({
       <Pressable onPress={onRightIconPress} hitSlop={16}>
         {currentState === 'Filter' || currentState === 'Select' ? (
           <Animated.View exiting={exiting} entering={entering}>
-            <Icon size={24} icon={<CloseIcon stroke={iconColor} />} />
+            <Icon size={24} icon={<CloseIcon />} stroke={iconColor} />
           </Animated.View>
         ) : (
           <Animated.View exiting={exiting} entering={entering}>
@@ -156,7 +157,7 @@ const RightSection = ({
                 )}
               />
             )}
-            <Icon size={24} icon={<FilterIcon stroke={iconColor} />} />
+            <Icon size={24} icon={<FilterIcon />} stroke={iconColor} />
           </Animated.View>
         )}
       </Pressable>
@@ -192,15 +193,7 @@ export const ConversationHeaderPresenter = ({
           onChangeText={onSearchTextChange}
           placeholder={i18n.t('CONVERSATION.SEARCH_PLACEHOLDER')}
           onRightIconPress={onClearSearch}
-          rightIcon={
-            <CloseIcon
-              stroke={
-                colorScheme === 'dark'
-                  ? tailwind.color('text-whiteA-A9')
-                  : tailwind.color('text-blackA-A9')
-              }
-            />
-          }
+          rightIcon={<CloseIcon />}
         />
       </Animated.View>
     );

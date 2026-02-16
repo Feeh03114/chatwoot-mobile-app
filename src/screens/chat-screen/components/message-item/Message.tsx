@@ -11,17 +11,11 @@ import {
   DeliveryStatus,
   TextBubble,
   ActivityBubble,
-  // LocationBubble,
-  // ImageBubble,
-  // AudioBubble,
-  // VideoBubble,
-  // FileBubble,
   EmailBubble,
   UnsupportedBubble,
 } from '../message-components';
 import { showToast } from '@/utils/toastUtils';
 import {
-  // ATTACHMENT_TYPES,
   MESSAGE_STATUS,
   MESSAGE_VARIANTS,
   ORIENTATION,
@@ -35,10 +29,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { CopyIcon, Trash } from '@/svg-icons';
 import { MenuOption, MessageMenu } from '../message-menu';
 import { tailwind } from '@/theme';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View, useColorScheme } from 'react-native';
 import { Avatar } from '@/components-next';
-
-// import { ImageMetadata } from '@/types';
 
 type MessageComponentProps = {
   item: Message;
@@ -54,40 +46,40 @@ type MessageWrapperProps = {
   shouldGroupWithPrevious: boolean;
   shouldGroupWithNext: boolean;
   shouldShowAvatar: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  avatarInfo: { name: string | null | undefined; src: any }; // Updated type
+  avatarInfo: { name: string | null | undefined; src: any };
   getMenuOptions: (message: Message) => MenuOption[];
   variant: string;
   channel?: Channel;
 };
 
 const variantTextMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'text-gray-700',
-  [MESSAGE_VARIANTS.USER]: 'text-white',
-  [MESSAGE_VARIANTS.BOT]: 'text-gray-700',
-  [MESSAGE_VARIANTS.TEMPLATE]: 'text-gray-700',
-  [MESSAGE_VARIANTS.ERROR]: 'text-white',
+  [MESSAGE_VARIANTS.AGENT]: 'text-gray-700 dark:text-grayDark-950',
+  [MESSAGE_VARIANTS.USER]: 'text-gray-50 dark:text-grayDark-950',
+  [MESSAGE_VARIANTS.BOT]: 'text-gray-700 dark:text-grayDark-950',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'text-gray-700 dark:text-grayDark-950',
+  [MESSAGE_VARIANTS.ERROR]: 'text-gray-50 dark:text-grayDark-950',
 };
 
 const variantBaseMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'bg-gray-100',
-  [MESSAGE_VARIANTS.PRIVATE]: 'bg-amber-100',
-  [MESSAGE_VARIANTS.USER]: 'bg-brand-primary',
-  [MESSAGE_VARIANTS.BOT]: 'bg-brand-secondary',
-  [MESSAGE_VARIANTS.TEMPLATE]: 'bg-brand-secondary',
-  [MESSAGE_VARIANTS.ERROR]: 'bg-ruby-700',
-  [MESSAGE_VARIANTS.EMAIL]: 'bg-gray-100',
-  [MESSAGE_VARIANTS.UNSUPPORTED]: 'bg-amber-100 border border-dashed border-amber-700',
+  [MESSAGE_VARIANTS.AGENT]: 'bg-gray-100 dark:bg-grayDark-50',
+  [MESSAGE_VARIANTS.PRIVATE]: 'bg-amber-100 dark:bg-amberDark-100',
+  [MESSAGE_VARIANTS.USER]: 'bg-brand-primary dark:bg-brand-primary-dark',
+  [MESSAGE_VARIANTS.BOT]: 'bg-gray-100 dark:bg-grayDark-50',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'bg-gray-100 dark:bg-grayDark-50',
+  [MESSAGE_VARIANTS.ERROR]: 'bg-ruby-700 dark:bg-rubyDark-700',
+  [MESSAGE_VARIANTS.EMAIL]: 'bg-gray-100 dark:bg-grayDark-50',
+  [MESSAGE_VARIANTS.UNSUPPORTED]:
+    'bg-amber-100 dark:bg-amberDark-100 border border-dashed border-amber-700 dark:border-amberDark-700',
 };
 
 const variantBorderMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'border-gray-100',
-  [MESSAGE_VARIANTS.USER]: 'border-gray-100',
-  [MESSAGE_VARIANTS.BOT]: 'border-gray-100',
-  [MESSAGE_VARIANTS.TEMPLATE]: 'border-gray-100',
-  [MESSAGE_VARIANTS.ERROR]: 'border-gray-100',
-  [MESSAGE_VARIANTS.EMAIL]: 'border-gray-100',
-  [MESSAGE_VARIANTS.UNSUPPORTED]: 'border-gray-100',
+  [MESSAGE_VARIANTS.AGENT]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.USER]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.BOT]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.ERROR]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.EMAIL]: 'border-gray-100 dark:border-grayDark-100',
+  [MESSAGE_VARIANTS.UNSUPPORTED]: 'border-gray-100 dark:border-grayDark-100',
 };
 
 const MessageWrapper = ({
@@ -112,7 +104,6 @@ const MessageWrapper = ({
   };
 
   const windowWidth = Dimensions.get('window').width;
-  // 52 is the sum of the left and right padding (12 + 12) and avatar width (24) and gap between avatar and message (4)
   const EMAIL_WIDTH = windowWidth - 52;
 
   return (
@@ -178,8 +169,8 @@ const MessageWrapper = ({
                   channel={channel}
                   sourceId={item.sourceId}
                   errorMessage={item.contentAttributes?.externalError || ''}
-                  deliveredColor="text-gray-700"
-                  sentColor="text-gray-700"
+                  deliveredColor="text-gray-700 dark:text-grayDark-700"
+                  sentColor="text-gray-700 dark:text-grayDark-700"
                 />
               </Animated.View>
             )}
@@ -192,6 +183,7 @@ const MessageWrapper = ({
 
 export const MessageComponent = (props: MessageComponentProps) => {
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
   const { conversationId } = useChatWindowContext();
   const { item, currentUserId, isEmailInbox } = props;
   const {
@@ -257,6 +249,11 @@ export const MessageComponent = (props: MessageComponentProps) => {
     const hasAttachments = !!(attachments && attachments.length > 0);
     const isDeleted = message.contentAttributes?.deleted;
 
+    const menuIconColor =
+      colorScheme === 'dark'
+        ? tailwind.color('grayDark-950')
+        : tailwind.color('gray-950');
+
     const menuOptions: MenuOption[] = [];
     if (messageType === MESSAGE_TYPES.ACTIVITY || isDeleted) {
       return [];
@@ -266,6 +263,7 @@ export const MessageComponent = (props: MessageComponentProps) => {
       menuOptions.push({
         title: i18n.t('CONVERSATION.LONG_PRESS_ACTIONS.COPY'),
         icon: <CopyIcon />,
+        stroke: menuIconColor || 'gray',
         handleOnPressMenuOption: () => handleCopyMessage(content),
         destructive: false,
       });
@@ -275,6 +273,7 @@ export const MessageComponent = (props: MessageComponentProps) => {
       menuOptions.push({
         title: i18n.t('CONVERSATION.LONG_PRESS_ACTIONS.DELETE_MESSAGE'),
         icon: <Trash />,
+        fill: menuIconColor,
         handleOnPressMenuOption: () => handleDeleteMessage(message.id),
         destructive: true,
       });
@@ -329,7 +328,6 @@ export const MessageComponent = (props: MessageComponentProps) => {
     if (!sender || sender.type === SENDER_TYPES.AGENT_BOT) {
       return {
         name: i18n.t('CONVERSATION.BOT'),
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
         src: require('../../../../assets/local/bot-avatar.png'),
       };
     }
@@ -341,29 +339,6 @@ export const MessageComponent = (props: MessageComponentProps) => {
       },
     };
   };
-  // TODO: Add this once we have a proper way to render single attachments
-  // const renderSingleAttachment = (attachment: ImageMetadata) => {
-  //   switch (attachment.fileType) {
-  //     case ATTACHMENT_TYPES.LOCATION:
-  //       return (
-  //         <LocationBubble
-  //           latitude={attachment.coordinatesLat ?? 0}
-  //           longitude={attachment.coordinatesLong ?? 0}
-  //           variant={variant()}
-  //         />
-  //       );
-  //     case ATTACHMENT_TYPES.IMAGE:
-  //       return <ImageBubble imageSrc={attachment.dataUrl} />;
-  //     case ATTACHMENT_TYPES.AUDIO:
-  //       return <AudioBubble audioSrc={attachment.dataUrl} variant={variant()} />;
-  //     case ATTACHMENT_TYPES.VIDEO:
-  //       return <VideoBubble videoSrc={attachment.dataUrl} />;
-  //     case ATTACHMENT_TYPES.FILE:
-  //       return <FileBubble fileSrc={attachment.dataUrl} variant={variant()} />;
-  //     default:
-  //       return <TextBubble item={item} variant={variant()} />;
-  //   }
-  // };
 
   const renderMessageContent = () => {
     if (messageType === MESSAGE_TYPES.ACTIVITY) {
@@ -381,12 +356,7 @@ export const MessageComponent = (props: MessageComponentProps) => {
       messageContent = <EmailBubble item={item} variant={variant()} />;
     } else if (isEmailInbox && !item.private) {
       messageContent = <EmailBubble item={item} variant={variant()} />;
-    }
-    // TODO: Add this once we have a proper way to render single attachments
-    // else if (attachments?.length === 1 && !item.content && !isReplyMessage) {
-    //   messageContent = renderSingleAttachment(attachments[0]);
-    // }
-    else if (attachments?.length >= 1 || isReplyMessage) {
+    } else if (attachments?.length >= 1 || isReplyMessage) {
       messageContent = <ComposedBubble item={item} variant={variant()} />;
     } else if (item.content) {
       messageContent = <TextBubble item={item} variant={variant()} />;

@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
-import { Dimensions, Platform, Pressable, StyleSheet, useColorScheme } from 'react-native';
+import React, { PropsWithChildren, useMemo } from 'react';
+import { Dimensions, Platform, Pressable, StyleSheet, useColorScheme, ViewStyle } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -28,7 +28,7 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 const tabExitSpringConfig = { damping: 20, stiffness: 360, mass: 1 };
 const tabEnterSpringConfig = { damping: 30, stiffness: 360, mass: 1 };
 
-type ActionTabBarBackgroundProps = BlurViewProps & PropsWithChildren;
+type ActionTabBarBackgroundProps = BlurViewProps & PropsWithChildren & { androidShadowStyle?: ViewStyle };
 
 const ActionLabelTag = ({ stroke }: { stroke: string }) => (
   <Svg width="29" height="28" viewBox="0 0 29 28" fill="none">
@@ -66,7 +66,7 @@ const ActionStatusIcon = ({ stroke }: { stroke: string }) => (
 );
 
 const ActionTabBarBackground = (props: ActionTabBarBackgroundProps) => {
-  const { children, blurAmount, style } = props;
+  const { children, blurAmount, style, androidShadowStyle } = props;
   const colorScheme = useColorScheme();
 
   const currentState = useAppSelector(selectCurrentState);
@@ -87,6 +87,8 @@ const ActionTabBarBackground = (props: ActionTabBarBackgroundProps) => {
     };
   });
 
+
+
   const blurType = colorScheme === 'dark' ? 'dark' : 'light';
 
   return Platform.OS === 'ios' ? (
@@ -94,7 +96,7 @@ const ActionTabBarBackground = (props: ActionTabBarBackgroundProps) => {
       {children}
     </AnimatedBlurView>
   ) : (
-    <Animated.View style={[style, animatedTabBarStyle, styles.listShadow(colorScheme)]}>
+    <Animated.View style={[style, animatedTabBarStyle, androidShadowStyle]}>
       {children}
     </Animated.View>
   );
@@ -136,6 +138,19 @@ export const ActionTabs = () => {
   const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
 
+  const listShadowStyle = useMemo(() => {
+    return Platform.select({
+      ios: {}, // iOS não precisa de sombra aqui, ou pode ser um estilo de sombra diferente
+      android: {
+        elevation: 4,
+        backgroundColor:
+          colorScheme === 'dark'
+            ? tailwind.color('brand-background-dark')
+            : tailwind.color('brand-background'),
+      },
+    }) || {};
+  }, [colorScheme]);
+
   const { actionsModalSheetRef } = useRefsContext();
 
   const handleBulkChangeStatus = () => {
@@ -153,8 +168,8 @@ export const ActionTabs = () => {
 
   const iconColor =
     colorScheme === 'dark'
-      ? tailwind.color('grayDark-950')
-      : tailwind.color('gray-950');
+      ? tailwind.color('grayDark-950') || 'gray'
+      : tailwind.color('gray-950') || 'gray';
 
   const bulkSelectActions = [
     {
@@ -174,27 +189,32 @@ export const ActionTabs = () => {
     },
   ];
 
+  const actionTabBarBackgroundStyle = useMemo(() => {
+    return Platform.select({
+      ios: [
+        tailwind.style(
+          'flex flex-row rounded-[30px] items-center absolute justify-between w-[220px] px-6 py-[15px] bg-blackA-A2 dark:bg-whiteA-A2',
+          `h-[${ACTION_TAB_HEIGHT}px] bottom-[${bottom + 8}px] left-[${
+            (SCREEN_WIDTH - 220) / 2
+          }px]`,
+        ),
+      ],
+      android: [
+        tailwind.style(
+          'flex flex-row rounded-[30px] items-center absolute justify-between w-[220px] px-6 py-[15px]',
+          `h-[${ACTION_TAB_HEIGHT}px] bottom-[${bottom + 8}px] left-[${
+            (SCREEN_WIDTH - 220) / 2
+          }px]`,
+        ),
+      ],
+    });
+  }, [bottom, colorScheme]);
+
   return (
     <ActionTabBarBackground
       blurAmount={25}
-      style={Platform.select({
-        ios: [
-          tailwind.style(
-            'flex flex-row rounded-[30px] items-center absolute justify-between w-[220px] px-6 py-[15px] bg-blackA-A2 dark:bg-whiteA-A2',
-            `h-[${ACTION_TAB_HEIGHT}px] bottom-[${bottom + 8}px] left-[${
-              (SCREEN_WIDTH - 220) / 2
-            }px]`,
-          ),
-        ],
-        android: [
-          tailwind.style(
-            'flex flex-row rounded-[30px] items-center absolute justify-between w-[220px] px-6 py-[15px]',
-            `h-[${ACTION_TAB_HEIGHT}px] bottom-[${bottom + 8}px] left-[${
-              (SCREEN_WIDTH - 220) / 2
-            }px]`,
-          ),
-        ],
-      })}>
+      style={actionTabBarBackgroundStyle}
+      androidShadowStyle={listShadowStyle}>
       {bulkSelectActions.map(actionItem => {
         return <ActionItem key={actionItem.action} {...{ actionItem }} />;
       })}
@@ -202,22 +222,3 @@ export const ActionTabs = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  listShadow: (colorScheme: 'light' | 'dark' | null | undefined) =>
-    Platform.select({
-      ios: {
-        shadowColor: '#00000040',
-        shadowOffset: { width: 0, height: 0.15 },
-        shadowRadius: 2,
-        shadowOpacity: 0.35,
-        elevation: 2,
-      },
-      android: {
-        elevation: 4,
-        backgroundColor:
-          colorScheme === 'dark'
-            ? tailwind.color('brand-background-dark')
-            : tailwind.color('brand-background'),
-      },
-    }) || {},
-});

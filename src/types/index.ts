@@ -23,6 +23,8 @@ export interface GenericListType {
   hasChevron?: boolean;
   disabled?: boolean;
   link?: string;
+  stroke?: string; // Adicionado
+  fill?: string; // Adicionado
   onPressListItem?: (key?: string) => void;
   actions?: {
     actionName: string;

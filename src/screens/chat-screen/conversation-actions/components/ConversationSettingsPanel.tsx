@@ -1,5 +1,5 @@
-import React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import { Platform, StyleSheet, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { tailwind } from '@/theme';
@@ -25,18 +25,10 @@ export const ConversationSettingsPanel = ({
   onChangeTeamAssignee,
   onChangePriority,
 }: ConversationSettingsPanelProps) => {
-  return (
-    <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background'), styles.listShadow]}>
-      <AssigneePanel assignee={assignee} onPress={onChangeAssignee} />
-      <TeamPanel team={team} onPress={onChangeTeamAssignee} />
-      <PriorityPanel priority={priority} onPress={onChangePriority} />
-    </Animated.View>
-  );
-};
+  const colorScheme = useColorScheme();
 
-const styles = StyleSheet.create({
-  listShadow:
-    Platform.select({
+  const listShadowStyle = useMemo(() => {
+    return Platform.select({
       ios: {
         shadowColor: '#00000040',
         shadowOffset: { width: 0, height: 0.15 },
@@ -46,7 +38,23 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 4,
-        backgroundColor: tailwind.color('brand-background'),
+        backgroundColor:
+          colorScheme === 'dark'
+            ? tailwind.color('grayDark-500')
+            : tailwind.color('brand-background'),
       },
-    }) || {}, // Add fallback empty object
-});
+    }) || {};
+  }, [colorScheme]);
+  return (
+    <Animated.View
+      style={[
+        tailwind.style('rounded-[13px] mx-4 bg-brand-background'),
+        listShadowStyle,
+      ]}>
+      <AssigneePanel assignee={assignee} onPress={onChangeAssignee} />
+      <TeamPanel team={team} onPress={onChangeTeamAssignee} />
+      <PriorityPanel priority={priority} onPress={onChangePriority} />
+    </Animated.View>
+  );
+};
+

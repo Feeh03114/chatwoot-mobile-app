@@ -133,7 +133,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
   const isGestureActive = useSharedValue(false);
 
   const maxTranslation = WIDTH * 0.6;
-  const tappedBgStyle = tailwind.color('bg-gray-200 dark:bg-grayDark-200') as string;
+  const tappedBgStyle = tailwind.style('bg-gray-200 dark:bg-grayDark-200').backgroundColor as string;
   const maxSnapPointLeft = -maxTranslation;
   const maxSnapPointRight = maxTranslation;
 
@@ -431,7 +431,7 @@ export const Swipeable = forwardRef((props: SwipeableProps, _ref) => {
 
   useEffect(() => {
     baseBg.value =
-      tailwind.color('bg-brand-background dark:bg-brand-background-dark') ?? '#fff';
+      (tailwind.style('bg-brand-background dark:bg-brand-background-dark').backgroundColor as string) ?? '#fff';
   }, [scheme]);
 
   const tappedCellStyle = useAnimatedStyle(() => {

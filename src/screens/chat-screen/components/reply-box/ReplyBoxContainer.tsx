@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Keyboard, TextInput } from 'react-native';
+import { Alert, Keyboard, TextInput, useColorScheme } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import Animated, {
   FadeIn,
@@ -8,7 +8,9 @@ import Animated, {
   useDerivedValue,
   useAnimatedStyle,
   withSpring,
+  SharedValue, // Adicionado SharedValue
 } from 'react-native-reanimated';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useChatWindowContext, useRefsContext } from '@/context';
@@ -49,7 +51,7 @@ import { ReplyWarning } from './ReplyWarning';
 import { CannedResponses } from './CannedResponses';
 import { AttachedMedia } from '../message-components/AttachedMedia';
 import { CommandOptionsMenu } from '../message-components/CommandOptionsMenu';
-import { SendMessagePayload } from '@/store/conversation/conversationTypes';
+import { SendMessagePayload, AttachmentFile } from '@/store/conversation/conversationTypes';
 import { TypingIndicator } from './TypingIndicator';
 import { getTypingUsersText } from '@/utils';
 import { selectTypingUsersByConversationId } from '@/store/conversation/conversationTypingSlice';
@@ -80,6 +82,7 @@ const SHEET_APPEAR_SPRING_CONFIG = {
 const AnimatedKeyboardStickyView = Animated.createAnimatedComponent(KeyboardStickyView);
 const BottomSheetContent = () => {
   const hapticSelection = useHaptic();
+  const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
   const { bottom } = useSafeAreaInsets();
   const { messageListRef } = useRefsContext();
@@ -130,32 +133,34 @@ const BottomSheetContent = () => {
 
   useEffect(() => {
     if (!lastEmail) return;
-    const {
-      contentAttributes: { email: emailAttributes = {} },
-    } = lastEmail;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let emailAttributes: any = {};
+    if (lastEmail && !Array.isArray(lastEmail) && lastEmail.contentAttributes?.email) {
+      emailAttributes = lastEmail.contentAttributes.email;
+    }
 
     // Retrieve the email of the current conversation's sender
     const conversationContact = conversation?.meta?.sender?.email || '';
     let cc = emailAttributes.cc ? [...emailAttributes.cc] : [];
-    let to = [];
+    let to: string[] = [];
 
     // there might be a situation where the current conversation will include a message from a third person,
     // and the current conversation contact is in CC.
     // This is an edge-case, reported here: CW-1511 [ONLY FOR INTERNAL REFERENCE]
     // So we remove the current conversation contact's email from the CC list if present
     if (cc.includes(conversationContact)) {
-      cc = cc.filter(email => email !== conversationContact);
+      cc = cc.filter((email: string) => email !== conversationContact);
     }
 
     // If the last incoming message sender is different from the conversation contact, add them to the "to"
     // and add the conversation contact to the CC
-    if (!emailAttributes.from.includes(conversationContact)) {
+    if (emailAttributes.from && !emailAttributes.from.includes(conversationContact)) {
       to.push(...emailAttributes.from);
       cc.push(conversationContact);
     }
 
     // Remove the conversation contact's email from the BCC list if present
-    let bcc = (emailAttributes.bcc || []).filter(email => email !== conversationContact);
+    let bcc = (emailAttributes.bcc || []).filter((email: string) => email !== conversationContact);
 
     // Ensure only unique email addresses are in the CC list
     bcc = [...new Set(bcc)];
@@ -213,7 +218,7 @@ const BottomSheetContent = () => {
     return messagePayload;
   };
 
-  const getMessagePayload = (message: string, audioFile: File | null) => {
+  const getMessagePayload = (message: string, audioFile: AttachmentFile | null) => {
     let updatedMessage = message;
     if (isPrivate) {
       const regex = /@\[([\w\s]+)\]\((\d+)\)/g;
@@ -223,9 +228,9 @@ const BottomSheetContent = () => {
       );
     }
 
-    let messagePayload = {
-      conversationId,
-      message: updatedMessage,
+  let messagePayload: Partial<SendMessagePayload> = {
+    conversationId,
+    message,
       private: isPrivate,
       sender: {
         id: userId ?? 0,
@@ -273,11 +278,11 @@ const BottomSheetContent = () => {
     return messagePayload;
   };
 
-  const onRecordingComplete = async (audioFile: File | null) => {
+  const onRecordingComplete = async (audioFile: AttachmentFile | null) => {
     confirmOnSendReply(audioFile);
   };
 
-  const confirmOnSendReply = (audioFile: File | null) => {
+  const confirmOnSendReply = (audioFile: AttachmentFile | null) => {
     hapticSelection?.();
     if (textInputRef && 'current' in textInputRef && textInputRef.current) {
       (textInputRef.current as TextInput).clear();
@@ -302,7 +307,7 @@ const BottomSheetContent = () => {
       Alert.alert(undefinedVariablesMessage);
     } else {
       const messagePayload = getMessagePayload(messageContent, audioFile);
-      sendMessage(messagePayload);
+      sendMessage(messagePayload as SendMessagePayload);
     }
     // TODO: Implement this once we have add the support for multiple attachments
     // https://github.com/chatwoot/chatwoot/pull/6125
@@ -378,7 +383,14 @@ const BottomSheetContent = () => {
   const shouldShowCannedResponses = messageContent?.charAt(0) === '/';
 
   return (
-    <AnimatedKeyboardStickyView style={[tailwind.style('bg-brand-background dark:bg-brand-background-dark'), animatedInputWrapperStyle]}>
+    <AnimatedKeyboardStickyView
+      style={[
+        tailwind.style('flex-1'),
+        {
+          backgroundColor: colorScheme === 'dark' ? tailwind.color('brand-background-dark') : tailwind.color('brand-background'),
+        },
+        animatedInputWrapperStyle,
+      ]}>
       {!canReply && inbox && conversation && (
         <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(10)}>
           <ReplyWarning inbox={inbox} conversation={conversation} />

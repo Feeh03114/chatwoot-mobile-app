@@ -79,7 +79,7 @@ export const ChatHeader = ({
 
   return (
     <Animated.View
-      style={tailwind.style('border-b-[1px] border-b-blackA-A3 dark:border-b-grayDark-300')}>
+      style={tailwind.style('border-b-[1px] border-blackA-A3 dark:border-grayDark-300')}>
       <Animated.View style={tailwind.style('flex flex-row justify-between items-center px-4 py-2')}>
         <Animated.View style={tailwind.style('flex-1 flex-row gap-2 items-center justify-center')}>
           <Pressable
@@ -111,7 +111,7 @@ export const ChatHeader = ({
           <Animated.View style={tailwind.style('flex flex-row items-center gap-4')}>
             {hasSla && (
               <Pressable hitSlop={8} onPress={toggleSlaEventsSheet}>
-                <Icon icon={<SLAIcon color={slaIconColor} />} size={24} />
+                <Icon icon={<SLAIcon color={slaIconColor || 'gray'} />} size={24} />
               </Pressable>
             )}
             <Pressable hitSlop={8} onPress={onToggleChatStatus}>
@@ -137,9 +137,16 @@ export const ChatHeader = ({
       <BottomSheetModal
         ref={slaEventsSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={tailwind.style(
-          'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-        )}
+        handleIndicatorStyle={{
+          backgroundColor:
+            colorScheme === 'dark'
+              ? 'hsla(0, 0%, 100%, 0.169)'
+              : 'hsla(0, 0%, 0%, 0.133)',
+          overflow: 'hidden',
+          width: 32,
+          height: 4,
+          borderRadius: 11,
+        }}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

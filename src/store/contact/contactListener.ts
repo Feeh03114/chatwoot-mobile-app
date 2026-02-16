@@ -12,7 +12,7 @@ export const contactListenerMiddleware = createListenerMiddleware();
 
 contactListenerMiddleware.startListening({
   matcher: isAnyOf(conversationActions.fetchConversations.fulfilled),
-  effect: (action, listenerApi) => {
+  effect: (action: { payload: { conversations: Conversation[] } }, listenerApi) => {
     const { payload } = action;
     const { conversations } = payload;
     const contacts = conversations.map((conversation: Conversation) => conversation.meta.sender);
@@ -35,7 +35,7 @@ contactListenerMiddleware.startListening({
 
 contactListenerMiddleware.startListening({
   matcher: isAnyOf(notificationActions.fetchNotifications.fulfilled),
-  effect: (action, listenerApi) => {
+  effect: (action: { payload: { payload: Notification[] } }, listenerApi) => {
     const { payload: notifications } = action.payload;
     const conversationNotifications = notifications.filter(
       (notification: Notification) =>
@@ -52,7 +52,7 @@ contactListenerMiddleware.startListening({
 
 contactListenerMiddleware.startListening({
   matcher: isAnyOf(addNotification),
-  effect: (action, listenerApi) => {
+  effect: (action: { payload: { notification: Notification } }, listenerApi) => {
     const { payload } = action;
     const { notification } = payload;
     const contact = notification?.primaryActor?.meta?.sender;

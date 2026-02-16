@@ -6,6 +6,7 @@ import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch } from '@/hooks';
+import { AppDispatch } from '@/store';
 import { updateAttachments } from '@/store/conversation/sendMessageSlice';
 import { useRefsContext } from '@/context';
 import { AttachFileIcon, CameraIcon, MacrosIcon, PhotosIcon } from '@/svg-icons';
@@ -17,7 +18,7 @@ import i18n from '@/i18n';
 import { showToast } from '@/utils/toastUtils';
 import { findFileSize } from '@/utils/fileUtils';
 
-export const handleOpenPhotosLibrary = async dispatch => {
+export const handleOpenPhotosLibrary = async (dispatch: AppDispatch) => {
   const pickedAssets = await launchImageLibrary({
     quality: 1,
     selectionLimit: 4,
@@ -52,7 +53,7 @@ export const handleOpenPhotosLibrary = async dispatch => {
   }
 };
 
-const handleLaunchCamera = async dispatch => {
+const handleLaunchCamera = async (dispatch: AppDispatch) => {
   request(Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA).then(
     async result => {
       if (RESULTS.BLOCKED === result) {
@@ -111,7 +112,7 @@ const mapObject = (originalObject: DocumentPickerResponse): Asset[] => {
   ];
 };
 
-const handleAttachFile = async dispatch => {
+const handleAttachFile = async (dispatch: AppDispatch) => {
   try {
     const result = await DocumentPicker.pick({
       type: [
@@ -166,7 +167,10 @@ const ADD_MENU_OPTIONS = [
   },
 ];
 
-export const validateFileAndSetAttachments = async (dispatch, attachment) => {
+export const validateFileAndSetAttachments = async (
+  dispatch: AppDispatch,
+  attachment: any,
+) => {
   const { fileSize } = attachment;
   if (findFileSize(fileSize) <= MAXIMUM_FILE_UPLOAD_SIZE) {
     dispatch(updateAttachments([attachment]));

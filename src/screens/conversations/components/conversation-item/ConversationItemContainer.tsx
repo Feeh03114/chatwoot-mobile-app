@@ -45,7 +45,7 @@ const ReadComponent = React.memo(() => {
       : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsRead fill={fillColor} />} size={24} />
+      <Icon icon={<MarkAsRead />} fill={fillColor} size={24} />
     </Animated.View>
   );
 });
@@ -59,7 +59,7 @@ const UnreadComponent = React.memo(() => {
       : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsUnRead fill={fillColor} />} size={24} />
+      <Icon icon={<MarkAsUnRead />} fill={fillColor} size={24} />
     </Animated.View>
   );
 });
@@ -67,7 +67,7 @@ const UnreadComponent = React.memo(() => {
 const StatusComponent = React.memo(() => {
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center ')}>
-      <Icon icon={<StatusIcon />} size={24} />
+      <Icon icon={<StatusIcon />} fill={tailwind.color('text-gray-950')} size={24} />
       <Animated.Text
         style={tailwind.style(
           'text-sm font-inter-420-20 pt-[3px] text-brand-foreground dark:text-brand-foreground-dark',
@@ -184,15 +184,17 @@ export const ConversationItemContainer = memo((props: ConversationItemContainerP
   return (
     <Swipeable
       spacing={27}
-      leftElement={unreadCount > 0 ? <ReadComponent /> : <UnreadComponent />} // Remover passagem de colorScheme
+      leftElement={unreadCount > 0 ? <ReadComponent /> : <UnreadComponent />}
       rightElement={<StatusComponent />}
       handleLeftElementPress={markMessageReadOrUnread}
-      handleOnLeftOverswiped={markMessageReadOrunRead}
+      handleOnLeftOverswiped={markMessageReadOrUnread}
       handleRightElementPress={onStatusAction}
       handleOnRightOverswiped={onStatusAction}
       handleLongPress={onLongPressAction}
       handlePress={onPressAction}
       triggerOverswipeOnFlick
+      leftElementBgColor="bg-brand-primary dark:bg-brand-primary-dark"
+      rightElementBgColor="bg-green-800 dark:bg-greenDark-800"
       {...{ index, openedRowIndex }}>
       <ConversationItem {...viewProps} />
     </Swipeable>

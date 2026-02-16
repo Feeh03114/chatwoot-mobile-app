@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { BottomSheetBackgroundProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 
@@ -11,6 +11,7 @@ interface LabelBackdropProps extends BottomSheetBackgroundProps {
 
 export const LabelBackdrop: React.FC<LabelBackdropProps> = props => {
   const { animatedIndex, style, sheetRef } = props;
+  const colorScheme = useColorScheme();
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -24,7 +25,9 @@ export const LabelBackdrop: React.FC<LabelBackdropProps> = props => {
 
   return (
     <Pressable onPress={handleBackdropPress} style={style}>
-      <Animated.View style={[tailwind.style('bg-blackA-A9'), style, animatedStyle]} />
+      <Animated.View
+        style={[tailwind.style('bg-blackA-A9 dark:bg-blackA-A9'), style, animatedStyle]}
+      />
     </Pressable>
   );
 };

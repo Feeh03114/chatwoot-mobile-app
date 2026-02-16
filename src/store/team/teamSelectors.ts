@@ -11,9 +11,9 @@ export const { selectAll: selectAllTeams } = teamAdapter.getSelectors<RootState>
 export const filterTeams = createSelector(
   [selectAllTeams, (state: RootState, searchTerm: string) => searchTerm],
   (teams, searchTerm) => {
-    const teamsList = [
+    const teamsList: typeof teams = [
       {
-        id: '0',
+        id: 0,
         name: 'None',
         description: null,
         allowAutoAssign: false,

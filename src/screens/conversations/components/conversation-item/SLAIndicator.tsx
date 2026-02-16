@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Text } from 'react-native';
+import { Text, useColorScheme } from 'react-native';
 
 import { tailwind } from '@/theme';
 import { NativeView } from '@/components-next/native-components';
@@ -26,6 +26,7 @@ export const SLAIndicator = ({
   onSLAStatusChange: (hasThreshold: boolean) => void;
 }) => {
   const [slaStatus, setSlaStatus] = useState<SLAStatus | null>(null);
+  const colorScheme = useColorScheme();
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -79,13 +80,21 @@ export const SLAIndicator = ({
     return i18n.t(`SLA.${upperCaseType}`);
   };
 
+  const slaMissedColor = slaStatus?.isSlaMissed
+    ? tailwind.color('text-ruby-800')
+    : tailwind.color('text-gray-800');
+
+  const slaMissedColorDark = slaStatus?.isSlaMissed
+    ? tailwind.color('text-rubyDark-800')
+    : tailwind.color('text-grayDark-800');
+
   return (
     <NativeView style={tailwind.style('flex flex-row justify-center items-center')}>
-      <SlaMissedIcon color={slaStatus?.isSlaMissed ? '#E13D45' : '#BBBBBB'} />
+      <SlaMissedIcon color={colorScheme === 'dark' ? (slaMissedColorDark || 'gray') : (slaMissedColor || 'gray')} />
       <Text
         style={tailwind.style(
           'pl-1 text-sm leading-[20px] text-center',
-          slaStatus?.isSlaMissed ? 'text-ruby-800' : 'text-gray-800',
+          slaStatus?.isSlaMissed ? 'text-ruby-800 dark:text-rubyDark-800' : 'text-gray-800 dark:text-grayDark-800',
         )}>
         {`${sLAStatusText()}: ${slaStatus?.threshold}`}
       </Text>

@@ -199,7 +199,9 @@ export const AppNavigationContainer = () => {
       }}
       fallback={<ActivityIndicator animating />}>
       <BottomSheetModalProvider>
-        <View style={tailwind.style('flex-1 bg-brand-backgrounddark:bg-brand-background-dark')} onLayout={onLayoutRootView}>
+        <View
+          style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}
+          onLayout={onLayoutRootView}>
           <AppTabs />
         </View>
       </BottomSheetModalProvider>

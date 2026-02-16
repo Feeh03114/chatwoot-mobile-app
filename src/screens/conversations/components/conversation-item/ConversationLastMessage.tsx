@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, Text, ViewStyle } from 'react-native';
+import { StyleProp, Text, ViewStyle, useColorScheme } from 'react-native';
 
 import { tailwind } from '@/theme';
 import { NativeView } from '@/components-next/native-components';
@@ -70,6 +70,12 @@ const MessageContent = ({
 }) => {
   const { contentAttributes } = message || {};
   const { email: { subject = '' } = {} } = contentAttributes || {};
+  const colorScheme = useColorScheme();
+
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-900')
+      : tailwind.color('text-gray-900');
 
   const lastMessageContent = getPlainText(subject || message?.content);
 
@@ -77,14 +83,45 @@ const MessageContent = ({
 
   const isMessageSticker = message?.contentType === ('sticker' as Message['contentType']);
 
+  const getAttachmentIcon = (fileType: string) => {
+    switch (fileType) {
+      case 'image':
+        return <ImageAttachmentIcon />;
+      case 'audio':
+        return <AudioIcon />;
+      case 'file':
+        return <DocumentAttachmentIcon />;
+      default:
+        return <DocumentAttachmentIcon />;
+    }
+  };
+
+  const MessageType = ({ message, style }: { message: Message; style?: StyleProp<ViewStyle> }) => {
+    const { private: isPrivate } = message;
+    const isOutgoing = message?.messageType === MESSAGE_TYPES.OUTGOING;
+
+    if (isOutgoing || isPrivate) {
+      return (
+        <NativeView style={[tailwind.style('flex-row items-center gap-1'), style]}>
+          {isPrivate ? (
+            <Icon icon={<PrivateNoteIcon />} stroke={iconColor} />
+          ) : (
+            isOutgoing && <Icon icon={<OutgoingIcon />} stroke={iconColor} />
+          )}
+        </NativeView>
+      );
+    }
+    return null;
+  };
+
   if (message.content && isMessageSticker) {
     return (
       <NativeView style={tailwind.style('flex-row gap-1 items-center')}>
-        <Icon icon={<ImageAttachmentIcon />} />
+        <Icon icon={<ImageAttachmentIcon />} stroke={iconColor} />
         <Text
           numberOfLines={1}
           style={tailwind.style(
-            'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900',
+            'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900 dark:text-grayDark-900',
           )}>
           <MessageType message={message} style={tailwind.style('ml-1')} />
           {i18n.t(`CONVERSATION.ATTACHMENTS.image.CONTENT`)}
@@ -97,13 +134,13 @@ const MessageContent = ({
         <Text
           numberOfLines={numberOfLines}
           style={tailwind.style(
-            'text-md flex-1 font-inter-420-20 tracking-[0.3px] leading-[21px] text-gray-900',
+            'text-md flex-1 font-inter-420-20 tracking-[0.3px] leading-[21px] text-gray-900 dark:text-grayDark-900',
           )}>
           <MessageType message={message} style={tailwind.style('ml-1')} />
           <Text
             numberOfLines={numberOfLines}
             style={tailwind.style(
-              'text-md flex-1 font-inter-420-20 tracking-[0.3px] leading-[21px] text-gray-900',
+              'text-md flex-1 font-inter-420-20 tracking-[0.3px] leading-[21px] text-gray-900 dark:text-grayDark-900',
             )}>
             {lastMessageContent}
           </Text>
@@ -113,12 +150,12 @@ const MessageContent = ({
   } else if (message.attachments) {
     return (
       <NativeView style={tailwind.style('flex-row gap-1 items-center')}>
-        <Icon icon={getAttachmentIcon(lastMessageFileType)} />
+        <Icon icon={getAttachmentIcon(lastMessageFileType)} stroke={iconColor} />
         <MessageType message={message} />
         <Text
           numberOfLines={1}
           style={tailwind.style(
-            'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900',
+            'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900 dark:text-grayDark-900',
           )}>
           {i18n.t(`CONVERSATION.ATTACHMENTS.${lastMessageFileType}.CONTENT`)}
         </Text>
@@ -128,7 +165,7 @@ const MessageContent = ({
   return (
     <Text
       style={tailwind.style(
-        'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900',
+        'text-md flex-1 font-inter-420-20 tracking-[0.32px] leading-[21px] text-gray-900 dark:text-grayDark-900',
       )}>
       {i18n.t('CONVERSATION.NO_CONTENT')}
     </Text>

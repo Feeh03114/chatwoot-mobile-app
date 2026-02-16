@@ -80,6 +80,13 @@ export interface MessagesResponse {
   conversationId: number;
 }
 
+export interface AttachmentFile {
+  uri: string;
+  fileName: string;
+  type: string;
+  fileSize?: number;
+}
+
 export interface SendMessagePayload {
   conversationId: number;
   message: string;
@@ -88,7 +95,7 @@ export interface SendMessagePayload {
     id: number;
     thumbnail?: string;
   };
-  file?: File;
+  file?: AttachmentFile;
   contentAttributes?: {
     inReplyTo: number;
   };

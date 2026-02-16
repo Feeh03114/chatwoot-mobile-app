@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, useColorScheme } from 'react-native';
 import Markdown, { MarkdownIt } from 'react-native-markdown-display';
 import Animated from 'react-native-reanimated';
 import { Image } from 'expo-image';
@@ -18,19 +18,27 @@ import { VideoPlayer } from '../message-components';
 import { Message } from '@/types';
 
 const AudioIcon = () => {
+  const colorScheme = useColorScheme();
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-brand-primary-dark')
+      : tailwind.color('text-brand-primary');
+
   return (
     <Animated.View style={tailwind.style('flex-1 justify-center items-center')}>
-      <Icon
-        icon={<VoiceNote stroke={tailwind.color('text-brand-primary')} strokeOpacity={1} />}
-        size={24}
-      />
+      <Icon icon={<VoiceNote stroke={iconColor} strokeOpacity={1} />} size={24} />
     </Animated.View>
   );
 };
 const File = () => {
+  const colorScheme = useColorScheme();
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-brand-primary-dark')
+      : tailwind.color('text-brand-primary');
   return (
     <Animated.View style={tailwind.style('flex-1  justify-center items-center')}>
-      <Icon icon={<FileIcon fill={tailwind.color('text-brand-primary')} />} size={24} />
+      <Icon icon={<FileIcon fill={iconColor} />} size={24} />
     </Animated.View>
   );
 };
@@ -38,10 +46,14 @@ const File = () => {
 export const QuoteReply = () => {
   const quoteMessage = useAppSelector(selectQuoteMessage);
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
 
   const { messageListRef } = useRefsContext();
 
-  const textStyle = tailwind.style('text-gray-950');
+  const textStyle =
+    colorScheme === 'dark'
+      ? tailwind.style('text-grayDark-950')
+      : tailwind.style('text-gray-950');
 
   const styles = StyleSheet.create({
     text: {
@@ -87,7 +99,12 @@ export const QuoteReply = () => {
 
   const handleScrollToMessage = useCallback(() => {
     const messageIndex = messageListRef.current?.props.data?.findIndex(
-      (item: Message) => item.id === quoteMessage?.id,
+      (item: Message | { date: string; }) => {
+        if ('date' in item) {
+          return false;
+        }
+        return item.id === quoteMessage?.id;
+      },
     );
     const shouldScrollToMessage = messageIndex !== -1 && messageIndex !== undefined;
 
@@ -98,13 +115,19 @@ export const QuoteReply = () => {
         viewPosition: 0.5,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [messageListRef, quoteMessage?.id]);
+
+  const closeIconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-900')
+      : tailwind.color('text-gray-900');
 
   return (
     <Pressable
       onPress={handleScrollToMessage}
-      style={tailwind.style('flex flex-row items-center px-2.5 pb-[14px] bg-brand-background -z-10')}>
+      style={tailwind.style(
+        'flex flex-row items-center px-2.5 pb-[14px] bg-brand-background dark:bg-brand-background-dark -z-10',
+      )}>
       {quoteMessage?.attachments?.length && quoteMessage?.attachments?.length > 0 ? (
         <Animated.View style={tailwind.style('h-9.5 w-9.5 mr-3 rounded-lg overflow-hidden')}>
           {quoteMessage?.attachments?.length > 0 &&
@@ -130,7 +153,7 @@ export const QuoteReply = () => {
         <Animated.View>
           <Animated.Text
             style={tailwind.style(
-              'text-cxs tracking-[0.32px] leading-[15px] font-inter-420-20 text-blackA-A11',
+              'text-cxs tracking-[0.32px] leading-[15px] font-inter-420-20 text-blackA-A11 dark:text-whiteA-A11',
             )}>
             Replying to {quoteMessage?.sender?.name}
           </Animated.Text>
@@ -145,7 +168,6 @@ export const QuoteReply = () => {
                   linkify: true,
                   typographer: true,
                 })}
-                //   onLinkPress={handleURL}
                 style={styles}>
                 {quoteMessage?.content.split('\n').length > 0
                   ? `${quoteMessage?.content.split('\n')[0]}`
@@ -154,13 +176,17 @@ export const QuoteReply = () => {
             ) : (
               <Text
                 numberOfLines={1}
-                style={tailwind.style('text-md font-inter-normal-20 tracking-[0.32px] capitalize')}>
+                style={tailwind.style(
+                  'text-md font-inter-normal-20 tracking-[0.32px] capitalize text-gray-950 dark:text-grayDark-950',
+                )}>
                 {quoteMessage?.content}
               </Text>
             )
           ) : (
             <Text
-              style={tailwind.style('text-md font-inter-normal-20 tracking-[0.32px] capitalize')}>
+              style={tailwind.style(
+                'text-md font-inter-normal-20 tracking-[0.32px] capitalize text-gray-950 dark:text-grayDark-950',
+              )}>
               {quoteMessage?.attachments?.[0]?.fileType}
             </Text>
           )}
@@ -169,7 +195,7 @@ export const QuoteReply = () => {
       <Pressable
         style={tailwind.style('h-10 w-10 items-center justify-center -mr-[1px]')}
         onPress={handleOnPressClose}>
-        <Icon icon={<CloseIcon />} size={24} />
+        <Icon icon={<CloseIcon stroke={closeIconColor} />} size={24} />
       </Pressable>
     </Pressable>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import { BottomSheetModal, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 
 import { BottomSheetBackdrop, BottomSheetWrapper } from '@/components-next';
@@ -35,6 +35,7 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     sentColor,
     errorMessage,
   } = props;
+  const colorScheme = useColorScheme();
 
   const { deliveryStatusSheetRef } = useRefsContext();
 
@@ -81,7 +82,6 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     ) {
       return sourceId && isSent;
     }
-    // There is no source id for the line channel
     if (isALineChannel) {
       return true;
     }
@@ -97,7 +97,6 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
       return sourceId && isDelivered;
     }
 
-    // We will consider messages as delivered for web widget inbox and API inbox if they are sent
     if (isAWebWidgetChannel || isAPIChannel) {
       return isSent;
     }
@@ -124,36 +123,48 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     return false;
   };
 
+  const pendingIconColor = isOutgoing
+    ? colorScheme === 'dark'
+      ? tailwind.color('text-whiteA-A12')
+      : tailwind.color('text-blackA-A12')
+    : tailwind.color('text-whiteA-A12');
+
+  const readIconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-brand-primary-dark')
+      : tailwind.color('text-brand-primary');
+
+  const defaultSentDeliveredColor =
+    (colorScheme === 'dark'
+      ? tailwind.color('text-whiteA-A12')
+      : tailwind.color('text-whiteA-A12')) ?? '#858585';
+
   if (isPending) {
-    return (
-      <Icon
-        icon={
-          <MessagePendingIcon
-            stroke={
-              isOutgoing ? tailwind.color('text-blackA-A12') : tailwind.color('text-whiteA-A12')
-            }
-          />
-        }
-        size={14}
-      />
-    );
+    return <Icon icon={<MessagePendingIcon />} stroke={pendingIconColor} size={14} />;
   }
 
   if (isFailed) {
     return (
       <Pressable onPress={() => deliveryStatusSheetRef.current?.present()}>
-        <Icon icon={<WarningIcon stroke={tailwind.color('text-whiteA-A11')} />} size={14} />
+        <Icon icon={<WarningIcon />} stroke={tailwind.color('text-gray-50')} size={14} />
         <BottomSheetModal
           ref={deliveryStatusSheetRef}
           backdropComponent={BottomSheetBackdrop}
-          handleIndicatorStyle={tailwind.style(
-            'overflow-hidden bg-blackA-A6 w-8 h-1 rounded-[11px]',
-          )}
+          handleIndicatorStyle={{
+            backgroundColor:
+              colorScheme === 'dark'
+                ? 'hsla(0, 0%, 100%, 0.169)'
+                : 'hsla(0, 0%, 0%, 0.133)',
+            overflow: 'hidden',
+            width: 32,
+            height: 4,
+            borderRadius: 11,
+          }}
           enablePanDownToClose
           animationConfigs={animationConfigs}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('rounded-[26px] overflow-hidden')}
-          snapPoints={['15']}>
+          snapPoints={['15%']}>
           <BottomSheetWrapper>
             <ErrorInformation errorMessage={errorMessage} />
           </BottomSheetWrapper>
@@ -163,23 +174,14 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
   }
 
   if (showReadIndicator()) {
-    return (
-      <Icon
-        icon={<DoubleCheckIcon renderSecondTick stroke={tailwind.color('text-brand-primary')} />}
-        size={14}
-      />
-    );
+    return <Icon icon={<DoubleCheckIcon renderSecondTick />} stroke={readIconColor} size={14} />;
   }
 
   if (showDeliveredIndicator()) {
     return (
       <Icon
-        icon={
-          <DoubleCheckIcon
-            renderSecondTick={true}
-            stroke={tailwind.color(deliveredColor || 'text-whiteA-A12')}
-          />
-        }
+        icon={<DoubleCheckIcon renderSecondTick={true} />}
+        stroke={tailwind.color(deliveredColor ?? defaultSentDeliveredColor) ?? '#858585'}
         size={14}
       />
     );
@@ -188,7 +190,8 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
   if (showSentIndicator()) {
     return (
       <Icon
-        icon={<DoubleCheckIcon stroke={tailwind.color(sentColor || 'text-whiteA-A12')} />}
+        icon={<DoubleCheckIcon />}
+        stroke={tailwind.color(sentColor ?? defaultSentDeliveredColor) ?? '#858585'}
         size={14}
       />
     );

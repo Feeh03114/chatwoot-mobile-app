@@ -34,7 +34,7 @@ const UnreadComponent = React.memo(() => {
       : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsRead fillColor={iconFillColor} />} size={24} />
+      <Icon icon={<MarkAsRead fill={iconFillColor} />} size={24} />
     </Animated.View>
   );
 });
@@ -47,7 +47,7 @@ const ReadComponent = React.memo(() => {
       : tailwind.color('brand-foreground');
   return (
     <Animated.View style={tailwind.style('flex justify-center items-center')}>
-      <Icon icon={<MarkAsUnRead fillColor={iconFillColor} />} size={24} />
+      <Icon icon={<MarkAsUnRead fill={iconFillColor} />} size={24} />
     </Animated.View>
   );
 });

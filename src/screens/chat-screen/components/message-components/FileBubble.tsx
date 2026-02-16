@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet } from 'react-native';
+import { Alert, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import FileViewer from 'react-native-file-viewer';
 import Animated from 'react-native-reanimated';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -33,6 +33,7 @@ type FilePreviewProps = Pick<FileBubbleProps, 'fileSrc'> & {
 
 export const FileBubblePreview = (props: FilePreviewProps) => {
   const { fileSrc, isComposed = false, variant, isIncoming } = props;
+  const colorScheme = useColorScheme();
   const dirs = RNFetchBlob.fs.dirs;
 
   const [fileDownload, setFileDownload] = useState(false);
@@ -73,25 +74,32 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
     asyncFileDownload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const spinnerColor = isIncoming
+    ? colorScheme === 'dark'
+      ? tailwind.color('grayDark-950')
+      : tailwind.color('gray-50')
+    : colorScheme === 'dark'
+    ? tailwind.color('brand-primary-dark')
+    : tailwind.color('brand-primary');
+
+  const fileIconColor = isIncoming
+    ? colorScheme === 'dark'
+      ? tailwind.color('grayDark-950')
+      : tailwind.color('gray-50')
+    : colorScheme === 'dark'
+    ? tailwind.color('text-grayDark-900')
+    : tailwind.color('text-gray-300');
+
   return (
     <React.Fragment>
       {fileDownload ? (
         <Animated.View style={tailwind.style('pr-1.5')}>
-          <Spinner
-            size={20}
-stroke={isIncoming ? tailwind.color('text-white') : tailwind.color('bg-brand-primary')}
-          />
+          <Spinner size={20} stroke={spinnerColor} />
         </Animated.View>
       ) : (
         <Animated.View style={tailwind.style('pr-1.5')}>
-          <Icon
-            size={24}
-            icon={
-              <FileIcon
-fill={isIncoming ? tailwind.color('bg-white') : tailwind.color('text-brand-primary')}
-              />
-            }
-          />
+          <Icon size={24} icon={<FileIcon fill={fileIconColor} />} />
         </Animated.View>
       )}
       <Pressable hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }} onPress={previewFile}>
@@ -106,10 +114,10 @@ fill={isIncoming ? tailwind.color('bg-white') : tailwind.color('text-brand-prima
                   ? 'text-base tracking-[0.32px] leading-[22px] font-inter-normal-20'
                   : '',
                 variant === MESSAGE_VARIANTS.USER
-                  ? 'text-white'
+                  ? 'text-gray-50 dark:text-grayDark-950'
                   : variant === MESSAGE_VARIANTS.AGENT
-                    ? 'text-gray-700'
-                    : '',
+                  ? 'text-gray-700 dark:text-grayDark-900'
+                  : '',
               ),
               style.androidTextOnlyStyle,
             ]}>
@@ -119,8 +127,12 @@ fill={isIncoming ? tailwind.color('bg-white') : tailwind.color('text-brand-prima
             style={[
               tailwind.style(
                 'border-b-[1px] absolute left-0 right-0 ios:bottom-[1px] android:bottom-0',
-                variant === MESSAGE_VARIANTS.USER ? 'border-white' : '',
-                variant === MESSAGE_VARIANTS.AGENT ? 'border-brand-primary' : '',
+                variant === MESSAGE_VARIANTS.USER
+                  ? 'border-gray-50 dark:border-grayDark-950'
+                  : '',
+                variant === MESSAGE_VARIANTS.AGENT
+                  ? 'border-brand-primary dark:border-brand-primary-dark'
+                  : '',
               ),
             ]}
           />

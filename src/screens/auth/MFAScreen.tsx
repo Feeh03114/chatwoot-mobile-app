@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StatusBar, View, TextInput, Text, Pressable, ScrollView } from 'react-native';
+import {
+  Animated,
+  StatusBar,
+  View,
+  TextInput,
+  Text,
+  Pressable,
+  ScrollView,
+  useColorScheme,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSharedValue } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +25,7 @@ import i18n from '@/i18n';
 const MFAScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
   const { mfaToken, uiFlags, error } = useAppSelector(state => state.auth);
 
   const [activeTab, setActiveTab] = useState<'authenticator' | 'backup'>('authenticator');
@@ -101,8 +111,10 @@ const MFAScreen = () => {
     <SafeAreaView style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
       <StatusBar
         translucent
-        backgroundColor={tailwind.color('bg-brand-background')}
-        barStyle={'dark-content'}
+        backgroundColor={
+          tailwind.style('bg-brand-background dark:bg-brand-background-dark').backgroundColor as string
+        }
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
       />
       <View style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
         <ScrollView
@@ -111,16 +123,18 @@ const MFAScreen = () => {
           keyboardShouldPersistTaps="handled">
           <View style={tailwind.style('pt-6 gap-4')}>
             <Animated.Text
-              style={tailwind.style('text-2xl text-gray-950 font-inter-semibold-20 text-center')}>
+              style={tailwind.style(
+                'text-2xl text-gray-950 dark:text-grayDark-50 font-inter-semibold-20 text-center',
+              )}>
               {i18n.t('MFA.TITLE')}
             </Animated.Text>
           </View>
 
           {/* Tab Selector */}
-          <View style={tailwind.style('flex-row mt-8 mb-6 bg-gray-100 rounded-lg p-1')}>
+          <View style={tailwind.style('flex-row mt-8 mb-6 bg-gray-100 dark:bg-grayDark-100 rounded-lg p-1')}>
             <Pressable
               style={tailwind.style(
-                `flex-1 py-3 px-4 rounded-md ${activeTab === 'authenticator' ? 'bg-brand-background' : ''}`,
+                `flex-1 py-3 px-4 rounded-md ${activeTab === 'authenticator' ? 'bg-brand-background dark:bg-brand-background-dark' : ''}`,
               )}
               onPress={() => {
                 setActiveTab('authenticator');
@@ -131,7 +145,9 @@ const MFAScreen = () => {
               <Text
                 style={tailwind.style(
                   `text-center font-inter-normal-20 ${
-                    activeTab === 'authenticator' ? 'text-gray-950' : 'text-gray-600'
+                    activeTab === 'authenticator'
+                      ? 'text-gray-950 dark:text-grayDark-50'
+                      : 'text-gray-600 dark:text-grayDark-600'
                   }`,
                 )}>
                 {i18n.t('MFA.TABS.AUTHENTICATOR_APP')}
@@ -139,7 +155,7 @@ const MFAScreen = () => {
             </Pressable>
             <Pressable
               style={tailwind.style(
-                `flex-1 py-3 px-4 rounded-md ${activeTab === 'backup' ? 'bg-brand-background' : ''}`,
+                `flex-1 py-3 px-4 rounded-md ${activeTab === 'backup' ? 'bg-brand-background dark:bg-brand-background-dark' : ''}`,
               )}
               onPress={() => {
                 setActiveTab('backup');
@@ -150,7 +166,9 @@ const MFAScreen = () => {
               <Text
                 style={tailwind.style(
                   `text-center font-inter-normal-20 ${
-                    activeTab === 'backup' ? 'text-gray-950' : 'text-gray-600'
+                    activeTab === 'backup'
+                      ? 'text-gray-950 dark:text-grayDark-50'
+                      : 'text-gray-600 dark:text-grayDark-600'
                   }`,
                 )}>
                 {i18n.t('MFA.TABS.BACKUP_CODE')}
@@ -160,7 +178,12 @@ const MFAScreen = () => {
 
           {/* Code Input */}
           <View style={tailwind.style('mt-4')}>
-            <Text style={[tailwind.style('text-gray-700 font-inter-normal-20 mb-4 pl-2')]}>
+            <Text
+              style={[
+                tailwind.style(
+                  'text-gray-700 dark:text-grayDark-700 font-inter-normal-20 mb-4 pl-2',
+                ),
+              ]}>
               {activeTab === 'authenticator'
                 ? i18n.t('MFA.INSTRUCTIONS.AUTHENTICATOR')
                 : i18n.t('MFA.INSTRUCTIONS.BACKUP')}
@@ -182,7 +205,9 @@ const MFAScreen = () => {
                 {/* Error message for authenticator */}
                 {error && (
                   <Animated.Text
-                    style={tailwind.style('font-inter-normal-20 text-ruby-900 mb-6 pl-2')}>
+                    style={tailwind.style(
+                      'font-inter-normal-20 text-ruby-900 dark:text-rubyDark-900 mb-6 pl-2',
+                    )}>
                     {error}
                   </Animated.Text>
                 )}
@@ -208,7 +233,7 @@ const MFAScreen = () => {
                   <TextInput
                     ref={backupInputRef}
                     style={tailwind.style(
-                      'w-full p-4 border-2 rounded-lg text-left border-gray-300',
+                      'w-full p-4 border-2 rounded-lg text-left border-gray-300 dark:border-grayDark-300 text-gray-950 dark:text-grayDark-50 bg-blackA-A4 dark:bg-grayDark-900',
                     )}
                     value={backupCode}
                     onChangeText={text => {
@@ -217,6 +242,11 @@ const MFAScreen = () => {
                       if (error) dispatch(clearAuthError());
                     }}
                     placeholder={i18n.t('MFA.PLACEHOLDERS.BACKUP_CODE')}
+                    placeholderTextColor={
+                      tailwind.style(
+                        colorScheme === 'dark' ? 'text-grayDark-100' : 'text-gray-900',
+                      ).color as string
+                    }
                     keyboardType="default"
                     autoFocus
                     autoCorrect={false}
@@ -227,7 +257,9 @@ const MFAScreen = () => {
                 {/* Error message for backup code */}
                 {error && (
                   <Animated.Text
-                    style={tailwind.style('font-inter-normal-20 text-ruby-900 mb-6 pl-2')}>
+                    style={tailwind.style(
+                      'font-inter-normal-20 text-ruby-900 dark:text-rubyDark-900 mb-6 pl-2',
+                    )}>
                     {error}
                   </Animated.Text>
                 )}

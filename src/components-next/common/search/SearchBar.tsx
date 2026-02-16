@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, TextInputProps, ViewStyle, TextStyle, Pressable } from 'react-native'; // Adicionar Pressable e TextStyle
+import { TextInput, TextInputProps, ViewStyle, TextStyle, Pressable, useColorScheme } from 'react-native';
 import Animated, { withTiming } from 'react-native-reanimated';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
@@ -18,7 +18,7 @@ interface SearchBarProps extends TextInputProps {
   isInsideBottomSheet?: boolean;
   bottomLeft?: RenderPropType;
   wrapperStyle?: Animated.AnimateStyle<ViewStyle>;
-  inputStyle?: TextStyle; // Alterado para TextStyle
+  inputStyle?: TextStyle;
   isActive?: boolean;
 }
 
@@ -36,6 +36,17 @@ export const SearchBar = (props: SearchBarProps) => {
     isActive = false,
     ...otherProps
   } = props;
+  const colorScheme = useColorScheme();
+
+  const searchIconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-800')
+      : tailwind.color('text-gray-800');
+
+  const placeholderColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-800')
+      : tailwind.color('text-gray-800');
 
   // Row Exit Animation (manter)
   const exiting = () => {
@@ -60,7 +71,7 @@ export const SearchBar = (props: SearchBarProps) => {
       style={[
         tailwind.style(
           'px-3 h-[36px] relative flex-row items-center',
-          isActive ? 'flex-1 bg-brand-background rounded-[11px]' : ''
+          isActive ? 'flex-1 bg-brand-background dark:bg-brand-background-dark rounded-[11px]' : ''
         ),
         wrapperStyle,
       ]}>
@@ -75,21 +86,24 @@ export const SearchBar = (props: SearchBarProps) => {
               <Icon icon={leftIcon} size={18} />
             </Pressable>
           ) : (
-            <Icon icon={leftIcon} size={18} />
+            <Icon icon={leftIcon} size={18} stroke={searchIconColor} />
           )}
         </Animated.View>
       )}
       <SearchTextInput
         style={[
           tailwind.style(
-            'flex-1 h-9 px-8.5 py-[7px] text-black text-base font-inter-normal-20 leading-[19.5px] rounded-[11px]',
-            isActive ? 'bg-brand-background' : 'bg-blackA-A3',
+            'flex-1 h-9 px-8.5 py-[7px] text-base font-inter-normal-20 leading-[19.5px] rounded-[11px]',
+            'text-gray-950 dark:text-grayDark-950', // Text color
+            isActive
+              ? 'bg-brand-background dark:bg-brand-background-dark'
+              : 'bg-blackA-A3 dark:bg-whiteA-A3', // Background color
             isLoading ? 'pr-8.5' : 'pr-4',
-            leftIcon ? 'pl-8.5' : 'pl-4'
+            leftIcon ? 'pl-8.5' : 'pl-4',
           ),
           inputStyle,
         ]}
-        placeholderTextColor={tailwind.color('text-gray-800')}
+        placeholderTextColor={placeholderColor}
         {...otherProps}
       />
       {isLoading ? (

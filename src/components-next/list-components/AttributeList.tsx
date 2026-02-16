@@ -65,12 +65,12 @@ const AttributeItem = (props: AttributeItemProps) => {
           style={tailwind.style(
             'flex-1 flex-row items-center justify-between py-[11px]',
             listItem.icon ? 'ml-3' : '',
-            !isLastItem ? 'border-b-[1px] border-b-blackA-A3' : '',
+            !isLastItem ? 'border-b-[1px] border-blackA-A3' : '',
           )}>
           <Animated.View>
             <Animated.Text
               style={tailwind.style(
-                'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950',
+                'text-base font-inter-420-20 leading-[22px] tracking-[0.16px] text-gray-950 dark:text-grayDark-950',
               )}>
               {listItem.title}
             </Animated.Text>
@@ -81,7 +81,7 @@ const AttributeItem = (props: AttributeItemProps) => {
               ellipsizeMode="tail"
               style={tailwind.style(
                 'text-base font-inter-normal-20 leading-[22px] tracking-[0.16px] overflow-hidden',
-                listItem.subtitleType === 'light' ? 'text-gray-900' : 'text-gray-950',
+                listItem.subtitleType === 'light' ? 'text-gray-900 dark:text-grayDark-100' : 'text-gray-950 dark:text-grayDark-50',
                 listItem.type === 'link' ? 'text-brand-primary underline' : '',
               )}>
               {formattedValue}
@@ -113,7 +113,7 @@ export const AttributeList = (props: AttributeListProps) => {
           </Animated.Text>
         </Animated.View>
       ) : null}
-      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background'), styles.listShadow]}>
+      <Animated.View style={[tailwind.style('rounded-[13px] mx-4 bg-brand-background dark:bg-grayDark-500'), styles.listShadow]}>
         {list.map(
           (listItem, index) =>
             !listItem.disabled &&
@@ -142,8 +142,7 @@ const styles = StyleSheet.create({
         elevation: 2,
       },
       android: {
-        elevation: 4,
-        backgroundColor: tailwind.color('brand-background'),
+        elevation: 4
       },
     }) || {}, // Add fallback empty object
 });

@@ -47,7 +47,7 @@ export const PrivateTextCell = (props: PrivateTextCellProps) => {
         style={tailwind.style(
           'h-[21px] pt-[5px] pb-0.5 flex flex-row items-center justify-end',
         )}>
-        <Icon icon={<LockIcon fillColor={lockIconColor} />} size={12} />
+        <Icon icon={<LockIcon fill={lockIconColor} />} size={12} />
         <Text
           style={[
             tailwind.style('text-xs font-inter-420-20 tracking-[0.32px] pl-1'),

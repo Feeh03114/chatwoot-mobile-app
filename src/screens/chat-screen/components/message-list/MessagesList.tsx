@@ -26,10 +26,11 @@ type DateSectionProps = { item: { date: string } };
 const DateSection = ({ item }: DateSectionProps) => {
   return (
     <Animated.View style={tailwind.style('flex flex-row justify-center items-center py-4')}>
-      <Animated.View style={tailwind.style('rounded-lg py-1 px-[7px] bg-blackA-A3')}>
+      <Animated.View
+        style={tailwind.style('rounded-lg py-1 px-[7px] bg-blackA-A3 dark:bg-whiteA-A3')}>
         <Animated.Text
           style={tailwind.style(
-            'text-cxs font-inter-420-20 tracking-[0.32px] text-blackA-A11 leading-[15px]',
+            'text-cxs font-inter-420-20 tracking-[0.32px] text-blackA-A11 dark:text-whiteA-A11 leading-[15px]',
           )}>
           {item.date}
         </Animated.Text>

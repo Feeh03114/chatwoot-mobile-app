@@ -50,14 +50,14 @@ const TabBarIcons = ({ focused, route }: TabBarIconsProps) => {
   switch (route.name) {
     case 'Conversations':
       return focused ? (
-        <ConversationIconFilled color={color} />
+        <ConversationIconFilled color={color || 'gray'} />
       ) : (
-        <ConversationIconOutline color={color} />
+        <ConversationIconOutline color={color || 'gray'} />
       );
     case 'Inbox':
-      return focused ? <InboxIconFilled color={color} /> : <InboxIconOutline color={color} />;
+      return focused ? <InboxIconFilled color={color || 'gray'} /> : <InboxIconOutline color={color || 'gray'} />;
     case 'Settings':
-      return focused ? <SettingsIconFilled color={color} /> : <SettingsIconOutline color={color} />;
+      return focused ? <SettingsIconFilled color={color || 'gray'} /> : <SettingsIconOutline color={color || 'gray'} />;
   }
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, PermissionsAndroid, Platform, Pressable } from 'react-native';
+import { Alert, Dimensions, PermissionsAndroid, Platform, Pressable, useColorScheme } from 'react-native';
 import AudioRecorderPlayer, {
   RecordBackType,
   AVEncodingOption,
@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
 import { TEXT_INPUT_CONTAINER_HEIGHT } from '@/constants';
+import { AttachmentFile } from '@/store/conversation/conversationTypes';
 import { useChatWindowContext } from '@/context';
 import { SendIcon, Trash } from '@/svg-icons';
 import { tailwind } from '@/theme';
@@ -64,11 +65,12 @@ export const AudioRecorder = ({
   onRecordingComplete,
   audioFormat,
 }: {
-  onRecordingComplete: (audioFile: File) => void;
+  onRecordingComplete: (audioFile: AttachmentFile) => void;
   audioFormat: 'audio/m4a' | 'audio/wav';
 }) => {
   const localRecordedAudioCacheFilePaths = useAppSelector(selectLocalRecordedAudioCacheFilePaths);
   const dispatch = useAppDispatch();
+  const colorScheme = useColorScheme();
   const [isSending, setIsSending] = useState(false);
 
   const { setIsVoiceRecorderOpen } = useChatWindowContext();
@@ -189,7 +191,7 @@ export const AudioRecorder = ({
           const audioFile = await createAudioFile(value);
           dispatch(addNewCachePath(audioFile.originalPath));
           setIsVoiceRecorderOpen(false);
-          onRecordingComplete(audioFile as unknown as File);
+          onRecordingComplete(audioFile as unknown as AttachmentFile);
         } catch (error) {
           Sentry.captureException(error);
           Alert.alert(
@@ -217,38 +219,53 @@ export const AudioRecorder = ({
     setIsAudioRecording(!isAudioRecording);
   };
 
+  const trashIconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-950')
+      : tailwind.color('text-gray-950');
+
+  const playPauseIconFillColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-950')
+      : tailwind.color('text-gray-950');
+
+  const sendIconStrokeColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-950')
+      : tailwind.color('text-gray-50');
+
   return (
     <Animated.View
       exiting={SlideOutDown.damping(24).stiffness(180)}
       entering={SlideInDown.damping(24).stiffness(180)}
       style={tailwind.style(
-        'px-1 flex flex-row items-center overflow-hidden',
+        'px-1 flex flex-row items-center overflow-hidden bg-brand-background dark:bg-brand-background-dark',
         `max-h-[${TEXT_INPUT_CONTAINER_HEIGHT}px]`,
       )}>
       <Pressable
         onPress={deleteRecorder}
         style={tailwind.style('h-10 w-10 flex items-center justify-center')}>
-        <Icon icon={<Trash />} size={28} />
+        <Icon icon={<Trash />} fill={trashIconColor || 'gray'} size={28} />
       </Pressable>
       <Animated.View
         style={tailwind.style(
-          'bg-brand-primary px-3 py-[7px] rounded-2xl min-h-9 flex flex-row items-center justify-between mx-1.5',
+          'bg-brand-primary dark:bg-brand-primary-dark px-3 py-[7px] rounded-2xl min-h-9 flex flex-row items-center justify-between mx-1.5',
           `w-[${RecorderSegmentWidth}px]`,
         )}>
         <Pressable onPress={toggleRecorder} hitSlop={12}>
           {isAudioRecording ? (
             <Animated.View>
-              <Icon icon={<PauseIcon fill={'white'} />} />
+              <Icon icon={<PauseIcon fill={playPauseIconFillColor} />} />
             </Animated.View>
           ) : (
             <Animated.View>
-              <Icon icon={<PlayIcon fill={'white'} />} />
+              <Icon icon={<PlayIcon fill={playPauseIconFillColor} />} />
             </Animated.View>
           )}
         </Pressable>
         <Animated.Text
           style={tailwind.style(
-            'text-xs leading-[14px] font-inter-420-20 tracking-[0.32px] text-whiteA-A12',
+            'text-xs leading-[14px] font-inter-420-20 tracking-[0.32px] text-whiteA-A12 dark:text-grayDark-950',
           )}>
           {millisecondsToTimeString(recorderData?.currentPosition)}
         </Animated.Text>
@@ -259,9 +276,9 @@ export const AudioRecorder = ({
         style={tailwind.style('h-10 w-10 flex items-center justify-center')}>
         <Animated.View
           style={tailwind.style(
-            'flex items-center justify-center h-7 w-7 rounded-full bg-brand-primary',
+            'flex items-center justify-center h-7 w-7 rounded-full bg-brand-primary dark:bg-brand-primary-dark',
           )}>
-          <Icon icon={<SendIcon />} size={16} />
+          <Icon icon={<SendIcon stroke={sendIconStrokeColor} />} size={16} />
         </Animated.View>
       </Pressable>
     </Animated.View>

@@ -318,10 +318,20 @@ const ConversationScreen = () => {
     }
   }, [currentBottomSheet]);
 
+  const handleIndicatorStyle = useMemo(() => {
+    return tailwind.style('overflow-hidden w-8 h-1 rounded-[11px]', {
+      backgroundColor:
+        colorScheme === 'dark' ? tailwind.color('whiteA-A6') : tailwind.color('blackA-A6'),
+    });
+  }, [colorScheme]);
+
   return (
     <SafeAreaView
       edges={['top']}
-      style={tailwind.style('flex-1 bg-brand-background dark:bg-brand-background-dark')}>
+      style={{
+        flex: 1,
+        backgroundColor: colorScheme === 'dark' ? tailwind.color('brand-background-dark') : tailwind.color('brand-background'),
+      }}>
       <StatusBar
         barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor="transparent"
@@ -333,9 +343,7 @@ const ConversationScreen = () => {
         <BottomSheetModal
           ref={filtersModalSheetRef}
           backdropComponent={BottomSheetBackdrop}
-          handleIndicatorStyle={tailwind.style(
-            'overflow-hidden bg-blackA-A6 dark:bg-whiteA-A6 w-8 h-1 rounded-[11px]',
-          )}
+          handleIndicatorStyle={handleIndicatorStyle}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('rounded-[26px] overflow-hidden')}
           enablePanDownToClose

@@ -1,6 +1,6 @@
 import React from 'react';
 import Animated from 'react-native-reanimated';
-import { Pressable } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import { Icon } from '@/components-next/common';
 import { VoiceNote } from '@/svg-icons';
 import { useScaleAnimation } from '@/utils';
@@ -10,6 +10,12 @@ import { voiceNoteIconEnterAnimation, voiceNoteIconExitAnimation } from '@/utils
 
 export const VoiceRecordButton = (props: VoiceRecordButtonProps) => {
   const { animatedStyle, handlers } = useScaleAnimation();
+  const colorScheme = useColorScheme();
+
+  const iconColor =
+    colorScheme === 'dark'
+      ? tailwind.color('text-grayDark-950')
+      : tailwind.color('text-gray-950');
 
   return (
     <Pressable {...props} {...handlers}>
@@ -20,7 +26,7 @@ export const VoiceRecordButton = (props: VoiceRecordButtonProps) => {
           tailwind.style('flex items-center justify-center h-10 w-10 rounded-2xl'),
           animatedStyle,
         ]}>
-        <Icon icon={<VoiceNote />} size={24} />
+        <Icon icon={<VoiceNote />} stroke={iconColor} size={24} />
       </Animated.View>
     </Pressable>
   );

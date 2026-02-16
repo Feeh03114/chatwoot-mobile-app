@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Platform, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 
@@ -41,14 +41,19 @@ const ListItem = (props: ListItemProps) => {
       <Animated.View style={tailwind.style('flex flex-row items-center pl-3')}>
         {listItem.icon ? (
           <Animated.View>
-            <Icon icon={listItem.icon} size={24} />
+            <Icon
+              icon={listItem.icon}
+              size={24}
+              stroke={listItem.stroke}
+              fill={listItem.fill}
+            />
           </Animated.View>
         ) : null}
         <Animated.View
           style={tailwind.style(
             'flex-1 flex-row items-center justify-between py-[11px]',
             listItem.icon ? 'ml-3' : '',
-            !isLastItem ? 'border-b-[1px] border-b-blackA-A3 dark:border-b-whiteA-A3' : '',
+            !isLastItem ? 'border-b-[1px] border-blackA-A3 dark:border-whiteA-A3' : '',
           )}>
           <Animated.View>
             <Animated.Text
@@ -68,7 +73,7 @@ const ListItem = (props: ListItemProps) => {
               )}>
               {listItem.subtitle}
             </Animated.Text>
-            {listItem.hasChevron ? <Icon icon={<CaretRight stroke={caretColor} />} size={20} /> : null}
+            {listItem.hasChevron ? <Icon icon={<CaretRight />} stroke={caretColor} size={20} /> : null}
           </Animated.View>
         </Animated.View>
       </Animated.View>
@@ -76,9 +81,27 @@ const ListItem = (props: ListItemProps) => {
   );
 };
 
-export const SettingsList = (props: GenericListProps) => {
-  const { list, sectionTitle } = props;
+export const SettingsList = ({ list, sectionTitle }: GenericListProps) => {
   const colorScheme = useColorScheme();
+
+  const listShadowStyle = useMemo(() => {
+    return Platform.select({
+      ios: {
+        shadowColor: '#00000040',
+        shadowOffset: { width: 0, height: 0.15 },
+        shadowRadius: 2,
+        shadowOpacity: 0.35,
+        elevation: 2,
+      },
+      android: {
+        elevation: 4,
+        backgroundColor:
+          colorScheme === 'dark'
+            ? tailwind.color('brand-background-dark')
+            : tailwind.color('brand-background'),
+      },
+    }) || {};
+  }, [colorScheme]);
 
   return (
     <Animated.View>
@@ -95,10 +118,10 @@ export const SettingsList = (props: GenericListProps) => {
       <Animated.View
         style={[
           tailwind.style('rounded-[13px] mx-4 bg-brand-background dark:bg-brand-background-dark'),
-          styles.listShadow(colorScheme),
+          listShadowStyle,
         ]}>
         {list.map(
-          (listItem, index) =>
+          (listItem: GenericListType, index: number) =>
             !listItem.disabled && (
               <ListItem
                 key={index}
@@ -111,22 +134,3 @@ export const SettingsList = (props: GenericListProps) => {
     </Animated.View>
   );
 };
-const styles = StyleSheet.create({
-  listShadow: (colorScheme: 'light' | 'dark' | null | undefined) =>
-    Platform.select({
-      ios: {
-        shadowColor: '#00000040',
-        shadowOffset: { width: 0, height: 0.15 },
-        shadowRadius: 2,
-        shadowOpacity: 0.35,
-        elevation: 2,
-      },
-      android: {
-        elevation: 4,
-        backgroundColor:
-          colorScheme === 'dark'
-            ? tailwind.color('brand-background-dark')
-            : tailwind.color('brand-background'),
-      },
-    }) || {}, // Add fallback empty object
-});

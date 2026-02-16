@@ -3,8 +3,9 @@ import { SharedValue } from 'react-native-reanimated';
 
 export type SendMessageButtonProps = PressableProps & {};
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AddCommandButtonProps = PressableProps & {
-  derivedAddMenuOptionStateValue: SharedValue<number>;
+  derivedAddMenuOptionStateValue: { readonly value: number };
 };
 
 export type PhotosCommandButtonProps = PressableProps & {};
