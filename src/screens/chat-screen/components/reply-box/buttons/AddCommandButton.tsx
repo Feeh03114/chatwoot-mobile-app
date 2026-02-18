@@ -26,8 +26,8 @@ export const AddCommandButton = ({
 
   const iconColor =
     colorScheme === 'dark'
-      ? tailwind.color('text-grayDark-900')
-      : tailwind.color('text-gray-900');
+      ? (tailwind.color('grayDark-900') ?? '#a1a1a1')
+      : (tailwind.color('gray-900') ?? '#1a1a1a');
 
   return (
     <Animated.View

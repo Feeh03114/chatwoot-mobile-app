@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Linking, Platform, Pressable, Text } from 'react-native';
+import { Alert, Linking, Platform, Pressable, Text, useColorScheme } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
@@ -146,22 +146,22 @@ const handleAttachFile = async (dispatch: AppDispatch) => {
 
 const ADD_MENU_OPTIONS = [
   {
-    icon: <PhotosIcon />,
+    iconComponent: (color: string) => <PhotosIcon stroke={color} />,
     title: 'Photos',
     handlePress: handleOpenPhotosLibrary,
   },
   {
-    icon: <CameraIcon />,
+    iconComponent: (color: string) => <CameraIcon stroke={color} />,
     title: 'Camera',
     handlePress: handleLaunchCamera,
   },
   {
-    icon: <AttachFileIcon />,
+    iconComponent: (color: string) => <AttachFileIcon stroke={color} />,
     title: 'Attach File',
     handlePress: handleAttachFile,
   },
   {
-    icon: <MacrosIcon />,
+    iconComponent: (color: string) => <MacrosIcon stroke={color} />,
     title: 'Macros',
     handlePress: () => {},
   },
@@ -179,18 +179,30 @@ export const validateFileAndSetAttachments = async (
   }
 };
 
+type MenuOptionType = {
+  iconComponent: (color: string) => React.ReactElement;
+  title: string;
+  handlePress: (dispatch: AppDispatch) => void;
+};
+
 type MenuOptionProps = {
   index: number;
-  menuOption: (typeof ADD_MENU_OPTIONS)[0];
+  menuOption: MenuOptionType;
 };
 
 const MenuOption = (props: MenuOptionProps) => {
   const { index, menuOption } = props;
+  const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
   const { macrosListSheetRef } = useRefsContext();
 
   const { animatedStyle, handlers } = useScaleAnimation();
   const hapticSelection = useHaptic();
+
+  const iconColor =
+    colorScheme === 'dark'
+      ? (tailwind.color('grayDark-950') ?? '#ededed')
+      : (tailwind.color('gray-950') ?? '#1a1a1a');
 
   const handlePress = () => {
     hapticSelection?.();
@@ -205,11 +217,11 @@ const MenuOption = (props: MenuOptionProps) => {
       <Pressable onPress={handlePress} {...handlers}>
         <Animated.View key={index} style={[tailwind.style('flex-row items-center justify-start')]}>
           <Animated.View style={tailwind.style('p-2')}>
-            <Icon icon={menuOption.icon} size={24} />
+            <Icon icon={menuOption.iconComponent(iconColor)} size={24} />
           </Animated.View>
           <Text
             style={tailwind.style(
-              'text-base font-inter-normal-20 leading-[18px] tracking-[0.24px] text-gray-950 pl-5',
+              'text-base font-inter-normal-20 leading-[18px] tracking-[0.24px] text-gray-950 dark:text-grayDark-950 pl-5',
             )}>
             {menuOption.title}
           </Text>
