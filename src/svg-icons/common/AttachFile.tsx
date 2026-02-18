@@ -11,7 +11,7 @@ export const AttachFileIcon = ({ stroke = 'currentColor' }: IconProps): JSX.Elem
         stroke={stroke}
         strokeWidth="1.5"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
       <Path
         d="M6 8V2.5C6 2.10218 6.15804 1.72064 6.43934 1.43934C6.72064 1.15804 7.10218 1 7.5 1C7.89782 1 8.27936 1.15804 8.56066 1.43934C8.84196 1.72064 9 2.10218 9 2.5V8C9 8.79565 8.68393 9.55871 8.12132 10.1213C7.55871 10.6839 6.79565 11 6 11C5.20435 11 4.44129 10.6839 3.87868 10.1213C3.31607 9.55871 3 8.79565 3 8V4"
