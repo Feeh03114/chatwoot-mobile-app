@@ -16,6 +16,7 @@ import * as WebBrowser from 'expo-web-browser';
 import ChatWootWidget from '@chatwoot/react-native-widget';
 import { useSelector } from 'react-redux';
 import * as Application from 'expo-application';
+import Constants from 'expo-constants';
 import { Account, AvailabilityStatus } from '@/types';
 import { clearAllConversations } from '@/store/conversation/conversationSlice';
 import { resetNotifications } from '@/store/notification/notificationSlice';
@@ -69,7 +70,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 const appName = Application.applicationName;
-const appVersion = Application.nativeApplicationVersion;
+const appVersion = Constants.expoConfig?.version ?? Application.nativeApplicationVersion;
 
 const buildNumber = Application.nativeBuildVersion;
 const appVersionDetails = buildNumber ? `${appVersion} (${buildNumber})` : appVersion;
