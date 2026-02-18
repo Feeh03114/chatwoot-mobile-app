@@ -55,7 +55,7 @@ export const MessageTextCell = (props: MessageTextCellProps) => {
     ? 'bg-ruby-700 dark:bg-rubyDark-700'
     : isIncoming
     ? 'bg-brand-primary dark:bg-brand-primary-dark'
-    : 'bg-gray-100 dark:bg-grayDark-100'; // isOutgoing
+    : 'bg-brand-secondary dark:bg-brand-secondary-dark'; // isOutgoing
 
   const timestampTextStyle =
     isMessageFailed || isIncoming
