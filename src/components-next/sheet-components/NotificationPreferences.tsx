@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Switch, StyleSheet } from 'react-native';
+import { Switch, StyleSheet, useColorScheme } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 
@@ -21,6 +21,7 @@ const addOrRemoveItemFromArray = <T,>(array: T[], key: T): T[] => {
 type NotificationPreferenceType = keyof typeof NOTIFICATION_PREFERENCE_TYPES;
 
 export const NotificationPreferences = () => {
+  const colorScheme = useColorScheme();
   const {
     all_push_flags: allPushFlags,
     selected_email_flags: selectedEmailFlags,
@@ -66,14 +67,14 @@ export const NotificationPreferences = () => {
           key={item}
           style={tailwind.style('flex flex-row items-center justify-between ml-2 mt-2')}>
           <Animated.Text
-            style={tailwind.style('flex-1 leading-[17px] tracking-[0.24px] text-gray-950')}>
+            style={tailwind.style('flex-1 leading-[17px] tracking-[0.24px] text-gray-950 dark:text-grayDark-950')}>
             {i18n.t(`NOTIFICATION_PREFERENCE.${NOTIFICATION_PREFERENCE_TYPES[item]}`)}
           </Animated.Text>
           <Switch
-            trackColor={{ false: '#C9D7E3', true: '#1F93FF' }}
+            trackColor={{ false: colorScheme === 'dark' ? '#3a3a3a' : '#C9D7E3', true: '#1F93FF' }}
             thumbColor="#FFFFFF"
             style={styles.switch}
-            ios_backgroundColor="#C9D7E3"
+            ios_backgroundColor={colorScheme === 'dark' ? '#3a3a3a' : '#C9D7E3'}
             onValueChange={() => onPushItemChange(item)}
             value={selectedPushFlags.includes(item)}
           />

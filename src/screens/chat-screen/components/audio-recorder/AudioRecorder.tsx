@@ -230,18 +230,12 @@ export const AudioRecorder = ({
 
   const trashIconColor =
     colorScheme === 'dark'
-      ? tailwind.color('text-grayDark-950')
-      : tailwind.color('text-gray-950');
+      ? (tailwind.color('grayDark-950') ?? '#ededed')
+      : (tailwind.color('gray-950') ?? '#1a1a1a');
 
-  const playPauseIconFillColor =
-    colorScheme === 'dark'
-      ? tailwind.color('text-grayDark-950')
-      : tailwind.color('text-gray-950');
+  const playPauseIconFillColor = 'white';
 
-  const sendIconStrokeColor =
-    colorScheme === 'dark'
-      ? tailwind.color('text-grayDark-950')
-      : tailwind.color('text-gray-50');
+  const sendIconStrokeColor = 'white';
 
   return (
     <Animated.View
