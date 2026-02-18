@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, useColorScheme } from 'react-native';
 import Animated, { LinearTransition, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { BottomSheetModal, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
@@ -12,6 +12,7 @@ import { InboxFilters } from './InboxFilters';
 import i18n from '@/i18n';
 import { useRefsContext } from '@/context';
 import { SearchBar } from '@/components-next/common/search/SearchBar';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { selectSearchText, setSearchText } from '@/store/notification/notificationFilterSlice';
 
@@ -25,6 +26,7 @@ export const InboxHeader = (props: InboxHeaderProps) => {
   const dispatch = useAppDispatch();
   const currentSearchText = useAppSelector(selectSearchText);
   const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle } = useBottomSheetThemeProps();
 
   const [showSearchInput, setShowSearchInput] = useState(false);
 
@@ -70,13 +72,6 @@ export const InboxHeader = (props: InboxHeaderProps) => {
     colorScheme === 'dark'
       ? tailwind.color('white')
       : tailwind.color('blackA-A9');
-
-  const handleIndicatorStyle = useMemo(() => {
-    return tailwind.style('overflow-hidden w-8 h-1 rounded-[11px]', {
-      backgroundColor:
-        colorScheme === 'dark' ? tailwind.color('whiteA-A6') : tailwind.color('blackA-A6'),
-    });
-  }, [colorScheme]);
 
   return (
     <Animated.View
@@ -152,6 +147,7 @@ export const InboxHeader = (props: InboxHeaderProps) => {
       <BottomSheetModal
         ref={inboxFiltersSheetRef}
         backdropComponent={BottomSheetBackdrop}
+        backgroundStyle={backgroundStyle}
         handleIndicatorStyle={handleIndicatorStyle}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
         style={tailwind.style('rounded-[26px] overflow-hidden')}

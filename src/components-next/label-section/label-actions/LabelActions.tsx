@@ -18,6 +18,7 @@ import { filterLabels } from '@/store/label/labelSelectors';
 import { LabelItem } from '../LabelItem';
 import { LabelStack } from './LabelStack';
 import { LabelBackdrop } from './LabelBackdrop';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 interface LabelActionsProps {
   labels: string[];
@@ -29,6 +30,7 @@ export const LabelActions = (props: LabelActionsProps) => {
   const { labels, onLabelsUpdate, sheetRef } = props;
   const [searchTerm, setSearchTerm] = useState('');
   const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle: sheetHandleIndicatorStyle } = useBottomSheetThemeProps();
 
   const [selectedLabels, setSelectedLabels] = useState(labels);
 
@@ -144,16 +146,8 @@ export const LabelActions = (props: LabelActionsProps) => {
       <BottomSheetModal
         ref={addLabelSheetRef}
         backdropComponent={backdropComponent}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
         style={tailwind.style('rounded-[26px] overflow-hidden')}
         enablePanDownToClose

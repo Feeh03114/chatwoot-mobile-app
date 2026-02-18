@@ -12,10 +12,10 @@ const blackA = require('./colors/blackA');
 const whiteA = require('./colors/whiteA');
 
 const brandColors = {
-  'brand-primary': radixUILightColors.blue[700],
-  'brand-primary-dark': radixUIDarkColors.blueDark[800],
-  'brand-secondary': radixUILightColors.blue[100],
-  'brand-secondary-dark': radixUIDarkColors.blueDark[400],
+  'brand-primary': '#00f2d0',       // WAXP teal
+  'brand-primary-dark': '#00f2d0',  // WAXP teal (dark mode)
+  'brand-secondary': '#e0fdf7',     // WAXP teal claro
+  'brand-secondary-dark': '#00c0a4', // WAXP teal escuro
   'brand-background': radixUILightColors.gray[50],
   'brand-background-dark': radixUIDarkColors.grayDark[50],
   'brand-foreground': '#FFFFFF',

@@ -66,6 +66,7 @@ import { PROFILE_EVENTS } from '@/constants/analyticsEvents';
 import { getUserPermissions } from '@/utils/permissionUtils';
 import { CONVERSATION_PERMISSIONS } from '@/constants/permissions';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 const appName = Application.applicationName;
 const appVersion = Application.nativeApplicationVersion;
@@ -77,6 +78,7 @@ const SettingsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle: sheetHandleIndicatorStyle } = useBottomSheetThemeProps();
   const availabilityStatus =
     (useSelector(selectCurrentUserAvailability) as AvailabilityStatus) || 'offline';
 
@@ -350,16 +352,8 @@ const SettingsScreen = () => {
         </Pressable>
       </Animated.ScrollView>
       <BottomSheetModal
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -374,16 +368,8 @@ const SettingsScreen = () => {
         </BottomSheetWrapper>
       </BottomSheetModal>
       <BottomSheetModal
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -397,16 +383,8 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={notificationPreferencesSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -420,16 +398,8 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={switchAccountSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
@@ -447,16 +417,8 @@ const SettingsScreen = () => {
       <BottomSheetModal
         ref={debugActionsSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert, Dimensions, Platform, Share, useColorScheme } from 'react-native';
+import { Alert, Dimensions, Platform, Share } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { BottomSheetModal, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
@@ -28,13 +28,14 @@ import { selectAllTeams } from '@/store/team/teamSelectors';
 import { selectInstallationUrl } from '@/store/settings/settingsSelectors';
 import { ConversationMetaInformation } from './components/ConversationMetaInformation';
 import { selectConversationParticipantsByConversationId } from '@/store/conversation-participant/conversationParticipantSelectors';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 
 export type ConversationActionType = 'mute' | 'status' | 'unmute';
 
 export const ConversationActions = () => {
-  const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle } = useBottomSheetThemeProps();
   const dispatch = useAppDispatch();
   const animationConfigs = useBottomSheetSpringConfigs({
     mass: 1,
@@ -160,16 +161,8 @@ export const ConversationActions = () => {
       <BottomSheetModal
         ref={updateParticipantSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={handleIndicatorStyle}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
         style={tailwind.style('rounded-[26px] overflow-hidden')}
         animationConfigs={animationConfigs}

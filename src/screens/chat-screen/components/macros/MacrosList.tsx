@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, useColorScheme } from 'react-native';
+import { View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import { BottomSheetBackdrop } from '@/components-next';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 import i18n from '@/i18n';
 import { useRefsContext } from '@/context';
 import { tailwind } from '@/theme';
@@ -16,7 +17,7 @@ import MacroDetails from './MacroDetails';
 import { MacroProvider } from './MacroContext';
 
 export const MacrosList = ({ conversationId }: { conversationId: number }) => {
-  const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle } = useBottomSheetThemeProps();
   const macros = useAppSelector(selectAllMacros);
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
 
@@ -40,13 +41,8 @@ export const MacrosList = ({ conversationId }: { conversationId: number }) => {
       <BottomSheetModal
         ref={macrosListSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor: colorScheme === 'dark' ? 'hsla(0, 0%, 100%, 0.169)' : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={handleIndicatorStyle}
         style={tailwind.style('rounded-[26px] overflow-hidden')}
         enablePanDownToClose
         snapPoints={['75%']}

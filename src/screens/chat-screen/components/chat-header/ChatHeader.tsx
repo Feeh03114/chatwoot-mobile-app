@@ -11,6 +11,7 @@ import { ChatDropdownMenu, DashboardList } from './DropdownMenu';
 import { SLAEvent } from '@/types/common';
 import { useRefsContext } from '@/context';
 import { SlaEvents } from './SlaEvents';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 type ChatHeaderProps = {
   name: string;
@@ -41,6 +42,7 @@ export const ChatHeader = ({
 }: ChatHeaderProps) => {
   const { slaEventsSheetRef } = useRefsContext();
   const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle: bottomSheetHandleIndicatorStyle } = useBottomSheetThemeProps();
 
   const animationConfigs = useBottomSheetSpringConfigs({
     mass: 1,
@@ -137,16 +139,8 @@ export const ChatHeader = ({
       <BottomSheetModal
         ref={slaEventsSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={bottomSheetHandleIndicatorStyle}
         enablePanDownToClose
         animationConfigs={animationConfigs}
         handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

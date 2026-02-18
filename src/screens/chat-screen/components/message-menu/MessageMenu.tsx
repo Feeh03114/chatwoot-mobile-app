@@ -12,7 +12,8 @@ import * as ContextMenu from 'zeego/context-menu';
 
 import { tailwind } from '@/theme';
 import { BottomSheetHeader, BottomSheetWrapper, Icon } from '@/components-next/common';
-import { useThemeColors } from '@/hooks/useThemeColors'; // Adicionar import
+import { useThemeColors } from '@/hooks/useThemeColors';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 export type MenuOption = {
   title: string;
@@ -106,7 +107,8 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
     [],
   );
 
-  const { getThemedColor, theme: colorScheme } = useThemeColors();
+  const { getThemedColor } = useThemeColors();
+  const { backgroundStyle, handleIndicatorStyle } = useBottomSheetThemeProps();
 
   if (menuOptions?.length === 0) {
     return <React.Fragment>{children}</React.Fragment>;
@@ -122,16 +124,8 @@ export const MessageMenu = (props: PropsWithChildren<MessageMenuProps>) => {
         <BottomSheetModal
           ref={contextMenuSheetRef}
           backdropComponent={renderBackDrop}
-        handleIndicatorStyle={{
-            backgroundColor:
-              colorScheme === 'dark'
-                ? 'hsla(0, 0%, 100%, 0.169)'
-                : 'hsla(0, 0%, 0%, 0.133)',
-            overflow: 'hidden',
-            width: 32,
-            height: 4,
-            borderRadius: 11,
-          }}
+          backgroundStyle={backgroundStyle}
+          handleIndicatorStyle={handleIndicatorStyle}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
           style={tailwind.style('mx-3 rounded-[26px] overflow-hidden')}
           detached

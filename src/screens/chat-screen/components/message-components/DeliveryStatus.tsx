@@ -11,6 +11,7 @@ import { Channel } from '@/types';
 import { INBOX_TYPES, MESSAGE_TYPES, MESSAGE_STATUS } from '@/constants';
 import { ErrorInformation } from './ErrorInformation';
 import { useRefsContext } from '@/context';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 type DeliveryStatusProps = {
   channel?: Channel;
@@ -36,6 +37,7 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     errorMessage,
   } = props;
   const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle: bottomSheetHandleIndicatorStyle } = useBottomSheetThemeProps();
 
   const { deliveryStatusSheetRef } = useRefsContext();
 
@@ -150,16 +152,8 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
         <BottomSheetModal
           ref={deliveryStatusSheetRef}
           backdropComponent={BottomSheetBackdrop}
-          handleIndicatorStyle={{
-            backgroundColor:
-              colorScheme === 'dark'
-                ? 'hsla(0, 0%, 100%, 0.169)'
-                : 'hsla(0, 0%, 0%, 0.133)',
-            overflow: 'hidden',
-            width: 32,
-            height: 4,
-            borderRadius: 11,
-          }}
+          backgroundStyle={backgroundStyle}
+          handleIndicatorStyle={bottomSheetHandleIndicatorStyle}
           enablePanDownToClose
           animationConfigs={animationConfigs}
           handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}

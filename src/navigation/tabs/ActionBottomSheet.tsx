@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useColorScheme } from 'react-native';
 import { BottomSheetModal, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 import tailwind from 'twrnc';
 import { BottomSheetBackdrop } from '@/components-next';
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import {
   resetActionState,
@@ -19,7 +19,7 @@ import {
 } from '@/screens/conversations/components/conversation-actions';
 
 const ActionBottomSheet = () => {
-  const colorScheme = useColorScheme();
+  const { backgroundStyle, handleIndicatorStyle } = useBottomSheetThemeProps();
   const dispatch = useAppDispatch();
   const currentActionState = useAppSelector(selectCurrentActionState);
 
@@ -56,16 +56,8 @@ const ActionBottomSheet = () => {
     <BottomSheetModal
       ref={actionsModalSheetRef}
       backdropComponent={BottomSheetBackdrop}
-      handleIndicatorStyle={{
-        backgroundColor:
-          colorScheme === 'dark'
-            ? 'hsla(0, 0%, 100%, 0.169)'
-            : 'hsla(0, 0%, 0%, 0.133)',
-        overflow: 'hidden',
-        width: 32,
-        height: 4,
-        borderRadius: 11,
-      }}
+      backgroundStyle={backgroundStyle}
+      handleIndicatorStyle={handleIndicatorStyle}
       handleStyle={tailwind.style('p-0 h-4 pt-[5px]')}
       style={tailwind.style('rounded-[26px] overflow-hidden')}
       animationConfigs={animationConfigs}

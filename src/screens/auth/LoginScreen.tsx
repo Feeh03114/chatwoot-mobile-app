@@ -36,7 +36,7 @@ import { selectTheme } from '@/store/settings/settingsSelectors';
 import { useRefsContext } from '@/context/RefsContext';
 import { SsoUtils } from '@/utils/ssoUtils';
 import { Theme } from '@/types/common/Theme';
-// import { useThemeColors } from '@/hooks/useThemeColors'; // Importar useThemeColors
+import { useBottomSheetThemeProps } from '@/hooks/useBottomSheetThemeProps';
 
 type FormData = {
   email: string;
@@ -71,8 +71,8 @@ const LoginScreen = () => {
   const installationUrl = useAppSelector(selectInstallationUrl);
   const baseUrl = useAppSelector(selectBaseUrl);
   const activeLocale = useAppSelector(selectLocale);
-  const theme = useAppSelector(selectTheme); // Obter o tema atual
-  // const { getThemedColor } = useThemeColors(); // Inicializar useThemeColors
+  const theme = useAppSelector(selectTheme);
+  const { backgroundStyle: sheetBackgroundStyle, handleIndicatorStyle: sheetHandleIndicatorStyle } = useBottomSheetThemeProps();
 
   useEffect(() => {
     languagesModalSheetRef.current?.dismiss({
@@ -366,16 +366,8 @@ const LoginScreen = () => {
       <BottomSheetModal
         ref={languagesModalSheetRef}
         backdropComponent={BottomSheetBackdrop}
-        handleIndicatorStyle={{
-          backgroundColor:
-            theme === 'dark'
-              ? 'hsla(0, 0%, 100%, 0.169)'
-              : 'hsla(0, 0%, 0%, 0.133)',
-          overflow: 'hidden',
-          width: 32,
-          height: 4,
-          borderRadius: 11,
-        }}
+        backgroundStyle={sheetBackgroundStyle}
+        handleIndicatorStyle={sheetHandleIndicatorStyle}
         detached
         enablePanDownToClose
         animationConfigs={animationConfigs}
