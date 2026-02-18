@@ -8,7 +8,7 @@ import Animated, {
   useDerivedValue,
   useAnimatedStyle,
   withSpring,
-  SharedValue, // Adicionado SharedValue
+  SharedValue,
 } from 'react-native-reanimated';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -211,10 +211,15 @@ const BottomSheetContent = () => {
   };
 
   // TODO: Implement this
-  const setReplyToInPayload = (messagePayload: Record<string, unknown>) => {
-    //     ...(quoteMessage?.id && {
-    //       contentAttributes: { inReplyTo: quoteMessage.id },
-    //     }),
+  const setReplyToInPayload = (
+    messagePayload: Partial<SendMessagePayload>,
+  ): Partial<SendMessagePayload> => {
+    if (quoteMessage?.id) {
+      return {
+        ...messagePayload,
+        contentAttributes: { inReplyTo: quoteMessage.id },
+      };
+    }
     return messagePayload;
   };
 
@@ -228,17 +233,15 @@ const BottomSheetContent = () => {
       );
     }
 
-  let messagePayload: Partial<SendMessagePayload> = {
-    conversationId,
-    message,
+    let messagePayload: Partial<SendMessagePayload> = {
+      conversationId,
+      message: updatedMessage,
       private: isPrivate,
       sender: {
         id: userId ?? 0,
         thumbnail: userThumbnail ?? '',
-        name: userName ?? '',
       },
-      files: [],
-    } as SendMessagePayload;
+    };
 
     messagePayload = setReplyToInPayload(messagePayload);
 
@@ -247,19 +250,16 @@ const BottomSheetContent = () => {
     }
 
     if (attachedFiles && attachedFiles.length) {
-      // messagePayload.files = [];
-      // TODO: Implement this
-      // attachedFiles.forEach(attachment => {
-      //   if (globalConfig.directUploadsEnabled) {
-      //     messagePayload.files.push(attachment.blobSignedId);
-      //   } else {
-      //     messagePayload.files.push(attachment.resource.file);
-      //   }
-      // });
       // TODO: Add support for multiple files later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      messagePayload.file = attachedFiles[0];
+      const asset = attachedFiles[0];
+      if (asset.uri && asset.fileName && asset.type) {
+        messagePayload.file = {
+          uri: asset.uri,
+          fileName: asset.fileName,
+          type: asset.type,
+          fileSize: asset.fileSize,
+        };
+      }
     }
 
     // TODO: Implement this
@@ -385,9 +385,11 @@ const BottomSheetContent = () => {
   return (
     <AnimatedKeyboardStickyView
       style={[
-        tailwind.style('flex-1'),
         {
-          backgroundColor: colorScheme === 'dark' ? tailwind.color('brand-background-dark') : tailwind.color('brand-background'),
+          backgroundColor:
+            colorScheme === 'dark'
+              ? (tailwind.color('brand-background-dark') ?? '#09090b')
+              : (tailwind.color('brand-background') ?? '#ffffff'),
         },
         animatedInputWrapperStyle,
       ]}>
@@ -407,7 +409,7 @@ const BottomSheetContent = () => {
         )}>
         {quoteMessage && (
           <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(10)}>
-            <QuoteReply />s
+            <QuoteReply />
           </Animated.View>
         )}
 

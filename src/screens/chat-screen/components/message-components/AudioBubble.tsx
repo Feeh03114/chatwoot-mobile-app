@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, Text, useColorScheme, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, runOnJS, useSharedValue } from 'react-native-reanimated';
 import Svg, { Path, Rect } from 'react-native-svg';
 import * as Sentry from '@sentry/react-native';
@@ -8,8 +8,8 @@ import { Audio, AVPlaybackStatus, InterruptionModeIOS, InterruptionModeAndroid }
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/hooks';
 import { MESSAGE_VARIANTS } from '@/constants';
-import { Slider } from '@/components-next/common';
 import { Spinner } from '@/components-next/spinner';
+import { PlaybackWaveform } from './PlaybackWaveform';
 import { tailwind } from '@/theme';
 import { IconProps } from '@/types';
 import {
@@ -437,6 +437,7 @@ const probeDurationMs = async (uri: string): Promise<number> => {
 
 export const AudioBubblePlayer = React.memo((props: AudioBubbleProps) => {
   const { audioSrc, variant, id } = props;
+  const colorScheme = useColorScheme();
 
   const dispatch = useDispatch();
   // Selects the key of the audio source that is currently globally playing.
@@ -708,63 +709,55 @@ export const AudioBubblePlayer = React.memo((props: AudioBubbleProps) => {
     [isThisCurrent, isAudioPlaying],
   );
 
-  const sliderProps = useMemo(
+  const isUser = variant === MESSAGE_VARIANTS.USER;
+  const iconColor = isUser ? 'white' : colorScheme === 'dark' ? '#e8e8e8' : 'black';
+
+  const waveformProps = useMemo(
     () => ({
-      trackColor: variant === MESSAGE_VARIANTS.USER ? 'bg-whiteA-A9' : 'bg-gray-500',
-      filledTrackColor: variant === MESSAGE_VARIANTS.USER ? 'bg-white' : 'bg-brand-primary',
-      knobStyle: variant === MESSAGE_VARIANTS.USER ? 'border-brand-secondary' : 'border-brand-primary',
-      manualSeekTo: manualSeekToJS, // Pass plain JS function.
+      audioId: id,
+      manualSeekTo: manualSeekToJS,
       currentPosition,
       totalDuration,
-      pauseAudio: pauseAudioJS, // Pass plain JS function.
+      pauseAudio: pauseAudioJS,
+      variant,
     }),
-    [variant, manualSeekToJS, currentPosition, totalDuration, pauseAudioJS], // Update dependencies.
+    [id, variant, manualSeekToJS, currentPosition, totalDuration, pauseAudioJS],
   );
 
   return (
     <View style={tailwind.style('w-full flex flex-row items-center flex-1')}>
       <Pressable disabled={isSoundLoading} hitSlop={10} onPress={togglePlayback}>
         {isSoundLoading ? (
-          // Show spinner when audio is loading
           <Animated.View>
-            <Spinner size={13} stroke={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'} />
+            <Spinner size={13} stroke={iconColor} />
           </Animated.View>
         ) : isCurrentAudioPlaying ? (
-          // Show pause icon if currently playing
           <Animated.View style={tailwind.style('pl-0.5 pr-0.5')} entering={FadeIn} exiting={FadeOut}>
-            <PauseIcon
-              fillOpacity={variant === MESSAGE_VARIANTS.USER ? '1' : '0.565'}
-              fill={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'}
-            />
+            <PauseIcon fillOpacity={isUser ? '1' : '0.565'} fill={iconColor} />
           </Animated.View>
         ) : (
-          // Show play icon if not playing
           <Animated.View style={tailwind.style('pl-0.5 pr-0.5')} entering={FadeIn} exiting={FadeOut}>
-            <PlayIcon
-              fillOpacity={variant === MESSAGE_VARIANTS.USER ? '1' : '0.565'}
-              fill={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'}
-            />
+            <PlayIcon fillOpacity={isUser ? '1' : '0.565'} fill={iconColor} />
           </Animated.View>
         )}
       </Pressable>
 
-      <Slider {...sliderProps} />
+      <PlaybackWaveform {...waveformProps} />
 
-      {/* Time display for current and total duration */}
       <View style={tailwind.style('w-10 flex-row justify-end')}>
         <Text
           style={tailwind.style(
             'text-xs font-inter-420-20',
-            variant === MESSAGE_VARIANTS.USER ? 'text-whiteA-A11' : 'text-gray-700',
-            !isCurrentAudioPlaying ? 'hidden' : '', // Hide current time if not playing
+            isUser ? 'text-whiteA-A11' : 'text-gray-700 dark:text-grayDark-700',
+            !isCurrentAudioPlaying ? 'hidden' : '',
           )}>
           {currentTime}
         </Text>
         <Text
           style={tailwind.style(
             'text-xs font-inter-420-20',
-            variant === MESSAGE_VARIANTS.USER ? 'text-whiteA-A11' : 'text-gray-700',
-            isCurrentAudioPlaying ? 'hidden' : '', // Hide total time if playing (as current time is shown)
+            isUser ? 'text-whiteA-A11' : 'text-gray-700 dark:text-grayDark-700',
+            isCurrentAudioPlaying ? 'hidden' : '',
           )}>
           {totalTime}
         </Text>

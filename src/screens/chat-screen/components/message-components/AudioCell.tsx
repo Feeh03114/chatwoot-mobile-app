@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, useColorScheme, View } from 'react-native';
 import { PlayBackType } from 'react-native-audio-recorder-player';
 import Animated, { Easing, FadeIn, FadeOut, useSharedValue } from 'react-native-reanimated';
 import Svg, { Path, Rect } from 'react-native-svg';
@@ -59,7 +59,8 @@ type AudioPlayerProps = Pick<AudioCellProps, 'audioSrc' | 'id'> & { // Include '
 };
 
 export const AudioPlayer = (props: AudioPlayerProps) => {
-  const { audioSrc, isIncoming, id } = props; // Destructure id here.
+  const { audioSrc, isIncoming, id } = props;
+  const colorScheme = useColorScheme();
 
   const [isSoundLoading, setIsSoundLoading] = useState(false);
   const [isAudioPlaying, setAudioPlaying] = useState(false);
@@ -145,12 +146,15 @@ export const AudioPlayer = (props: AudioPlayerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioKey, currentPlayingAudioSrc]); // Add audioKey and currentPlayingAudioSrc to dependencies.
 
+  const outgoingIconColor = colorScheme === 'dark' ? '#e8e8e8' : 'black';
+  const iconColor = isIncoming ? 'white' : outgoingIconColor;
+
   return (
     <View style={tailwind.style('flex flex-row items-center flex-1')}>
       <Pressable disabled={isSoundLoading} hitSlop={10} onPress={togglePlayback}>
         {isSoundLoading ? (
           <Animated.View>
-            <Spinner size={13} />
+            <Spinner size={13} stroke={iconColor} />
           </Animated.View>
         ) : isCurrentAudioSrcPlaying ? (
           <Animated.View
@@ -159,10 +163,7 @@ export const AudioPlayer = (props: AudioPlayerProps) => {
             exiting={FadeOut}>
             <Icon
               icon={
-                <PauseIcon
-                  fillOpacity={isIncoming ? '1' : '0.565'}
-                  fill={isIncoming ? 'white' : 'black'}
-                />
+                <PauseIcon fillOpacity={isIncoming ? '1' : '0.565'} fill={iconColor} />
               }
               size={13}
             />
@@ -172,16 +173,13 @@ export const AudioPlayer = (props: AudioPlayerProps) => {
             style={tailwind.style('pl-0.5 pr-0.5')}
             entering={FadeIn}
             exiting={FadeOut}>
-            <PlayIcon
-              fillOpacity={isIncoming ? '1' : '0.565'}
-              fill={isIncoming ? 'white' : 'black'}
-            />
+            <PlayIcon fillOpacity={isIncoming ? '1' : '0.565'} fill={iconColor} />
           </Animated.View>
         )}
       </Pressable>
       <Slider
-        trackColor={isIncoming ? 'bg-whiteA-A9' : 'bg-gray-500'}
-        filledTrackColor={isIncoming ? 'bg-white' : 'bg-brand-primary'}
+        trackColor={isIncoming ? 'bg-whiteA-A9' : 'bg-gray-500 dark:bg-grayDark-500'}
+        filledTrackColor={isIncoming ? 'bg-white' : 'bg-brand-primary dark:bg-brand-primary-dark'}
         knobStyle={isIncoming ? 'border-brand-secondary' : 'border-brand-primary'}
         {...{ manualSeekTo, currentPosition, totalDuration, pauseAudio }}
       />
@@ -227,8 +225,8 @@ export const AudioCell: React.FC<AudioCellProps> = props => {
             style={[
               tailwind.style(
                 'relative flex flex-row items-center w-[300px] pl-3 pr-2.5 py-2 rounded-2xl overflow-hidden',
-                isIncoming ? 'bg-brand-primary' : '',
-                isOutgoing ? 'bg-gray-100' : '',
+                isIncoming ? 'bg-brand-primary dark:bg-brand-primary-dark' : '',
+                isOutgoing ? 'bg-gray-100 dark:bg-grayDark-50' : '',
                 shouldRenderAvatar
                   ? isOutgoing
                     ? 'rounded-br-none'
@@ -247,7 +245,7 @@ export const AudioCell: React.FC<AudioCellProps> = props => {
                 style={tailwind.style(
                   'text-xs font-inter-420-20 tracking-[0.32px] leading-[14px] pr-1',
                   isIncoming ? 'text-whiteA-A11' : '',
-                  isOutgoing ? 'text-gray-700' : '',
+                  isOutgoing ? 'text-gray-700 dark:text-grayDark-700' : '',
                 )}>
                 {unixTimestampToReadableTime(timeStamp)}
               </Text>
@@ -258,8 +256,8 @@ export const AudioCell: React.FC<AudioCellProps> = props => {
                 channel={channel}
                 sourceId={sourceId}
                 errorMessage={errorMessage || ''}
-                deliveredColor="text-gray-700"
-                sentColor="text-gray-700"
+                deliveredColor="text-gray-700 dark:text-grayDark-700"
+                sentColor="text-gray-700 dark:text-grayDark-700"
               />
             </Animated.View>
           </Animated.View>
