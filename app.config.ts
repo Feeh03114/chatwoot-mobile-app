@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     name: 'AtenXP',
     slug: process.env.EXPO_PUBLIC_APP_SLUG || 'atenxp-mobile',
-    version: '4.3.13',
+    version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
