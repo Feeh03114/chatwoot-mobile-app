@@ -76,6 +76,11 @@ export const getBestLocale = () => {
     if (i18n.translations[locale.languageTag]) {
       return locale.languageTag;
     }
+    // Try with underscore format (device uses "pt-BR", app uses "pt_BR")
+    const underscoreTag = locale.languageTag.replace('-', '_');
+    if (i18n.translations[underscoreTag]) {
+      return underscoreTag;
+    }
     // Try language code (e.g., "en", "pt")
     if (i18n.translations[locale.languageCode]) {
       return locale.languageCode;
