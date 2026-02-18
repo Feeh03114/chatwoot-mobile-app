@@ -11,7 +11,7 @@ export const useBottomSheetThemeProps = () => {
       backgroundStyle: {
         backgroundColor:
           colorScheme === 'dark'
-            ? (tailwind.color('brand-background-dark') ?? '#1a1a1a')
+            ? (tailwind.color('brand-background-dark') ?? '#1b1b1b')
             : (tailwind.color('brand-background') ?? '#f9f9f9'),
       },
       handleIndicatorStyle: {

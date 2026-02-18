@@ -16,10 +16,10 @@ const brandColors = {
   'brand-primary-dark': '#00f2d0',  // WAXP teal (dark mode)
   'brand-secondary': '#e0fdf7',     // WAXP teal claro
   'brand-secondary-dark': '#00c0a4', // WAXP teal escuro
-  'brand-background': radixUILightColors.gray[50],
-  'brand-background-dark': radixUIDarkColors.grayDark[50],
+  'brand-background': '#f9f9f9',         // gray[50] hsl(0, 0%, 97.5%) converted to hex
+  'brand-background-dark': '#1b1b1b',    // grayDark[50] hsl(0, 0%, 10.5%) converted to hex
   'brand-foreground': '#FFFFFF',
-  'brand-foreground-dark': radixUIDarkColors.grayDark[950],
+  'brand-foreground-dark': '#eeeeee',    // grayDark[950] hsl(0, 0%, 93.5%) converted to hex
 };
 
 const chatwootAppColors = {
