@@ -146,23 +146,27 @@ const handleAttachFile = async (dispatch: AppDispatch) => {
 
 const ADD_MENU_OPTIONS = [
   {
-    iconComponent: (color: string) => <PhotosIcon stroke={color} />,
-    title: 'Photos',
+    key: 'photos',
+    icon: <PhotosIcon />,
+    titleKey: 'REPLY_BOX.PHOTOS',
     handlePress: handleOpenPhotosLibrary,
   },
   {
-    iconComponent: (color: string) => <CameraIcon stroke={color} />,
-    title: 'Camera',
+    key: 'camera',
+    icon: <CameraIcon />,
+    titleKey: 'REPLY_BOX.CAMERA',
     handlePress: handleLaunchCamera,
   },
   {
-    iconComponent: (color: string) => <AttachFileIcon stroke={color} />,
-    title: 'Attach File',
+    key: 'attach_file',
+    icon: <AttachFileIcon />,
+    titleKey: 'REPLY_BOX.ATTACH_FILE',
     handlePress: handleAttachFile,
   },
   {
-    iconComponent: (color: string) => <MacrosIcon stroke={color} />,
-    title: 'Macros',
+    key: 'macros',
+    icon: <MacrosIcon />,
+    titleKey: 'REPLY_BOX.MACROS',
     handlePress: () => {},
   },
 ];
@@ -180,8 +184,9 @@ export const validateFileAndSetAttachments = async (
 };
 
 type MenuOptionType = {
-  iconComponent: (color: string) => React.ReactElement;
-  title: string;
+  key: string;
+  icon: React.ReactElement;
+  titleKey: string;
   handlePress: (dispatch: AppDispatch) => void;
 };
 
@@ -207,7 +212,7 @@ const MenuOption = (props: MenuOptionProps) => {
   const handlePress = () => {
     hapticSelection?.();
     menuOption?.handlePress(dispatch);
-    if (menuOption.title === 'Macros') {
+    if (menuOption.key === 'macros') {
       macrosListSheetRef.current?.present();
     }
   };
@@ -217,13 +222,13 @@ const MenuOption = (props: MenuOptionProps) => {
       <Pressable onPress={handlePress} {...handlers}>
         <Animated.View key={index} style={[tailwind.style('flex-row items-center justify-start')]}>
           <Animated.View style={tailwind.style('p-2')}>
-            <Icon icon={menuOption.iconComponent(iconColor)} size={24} />
+            <Icon icon={menuOption.icon} stroke={iconColor} size={24} />
           </Animated.View>
           <Text
             style={tailwind.style(
               'text-base font-inter-normal-20 leading-[18px] tracking-[0.24px] text-gray-950 dark:text-grayDark-950 pl-5',
             )}>
-            {menuOption.title}
+            {i18n.t(menuOption.titleKey)}
           </Text>
         </Animated.View>
       </Pressable>
@@ -243,7 +248,7 @@ export const CommandOptionsMenu = () => {
       exiting={SlideOutDown.springify().damping(38).stiffness(240)}
       style={tailwind.style('mx-1 pt-2 items-start', `h-[${containerHeight}px]`)}>
       {ADD_MENU_OPTIONS.map((menuOption, index) => {
-        return <MenuOption key={menuOption.title} {...{ menuOption, index }} />;
+        return <MenuOption key={menuOption.key} {...{ menuOption, index }} />;
       })}
     </Animated.View>
   );

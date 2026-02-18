@@ -357,6 +357,12 @@
     "SELECT_MACRO": "Selecionar macro",
     "TITLE": "Macros"
   },
+  "REPLY_BOX": {
+    "PHOTOS": "Fotos",
+    "CAMERA": "Câmara",
+    "ATTACH_FILE": "Anexar Ficheiro",
+    "MACROS": "Macros"
+  },
   "MFA": {
     "BUTTONS": {
       "VERIFY": "Verificar",
