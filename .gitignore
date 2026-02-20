@@ -30,6 +30,10 @@ yarn-error.*
 # macOS
 .DS_Store
 *.pem
+google-services.json
+google-services_bk.json
+GoogleService-Info.plist
+GoogleService-Info_bk.plist
 
 # local env files
 .env*.local
